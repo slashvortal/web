@@ -460,7 +460,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	});
 
 	$scope.deleteDraft = () => co(function *(){
-		yield inbox.deleteDraft(draftId);
+		if (draftId)
+			yield inbox.deleteDraft(draftId);
 
 		router.hidePopup();
 	});
