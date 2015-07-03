@@ -1,5 +1,5 @@
 - var defs = {};
-div#compose-wrapper
+div#compose-wrapper(ng-controller="CtrlCompose")
 	form#compose(name="__form", ng-submit="send()", ng-class="{ warning: isWarning, 'has-formatting' : isToolbarShown, 'has-attachment': attachments.length }")
 		.filters.row.no-gutter.lava-icon-row.z1
 			nav.navbar.navbar-inverse(role="navigation")
@@ -33,7 +33,7 @@ div#compose-wrapper
 										input#check1(type='checkbox', name="isSkipWarning", ng-model="isSkipWarning")
 										label(for='isSkipWarning', ng-click="$event.stopPropagation(); toggleIsSkipWarning($event)") {{'LAVAMAIL.COMPOSE.LB_ASK_ME_AGAIN' | translate}}
 						li.btn-group.dropdown(dropdown, is-open="isDraftWarning")
-							button.btn.btn-default(type="button", dropdown-toggle, ng-click="close()", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_DISCARD' | translate}}", tooltip-append-to-body="true")
+							button.btn.btn-default(type="button", ng-click="$event.stopPropagation(); close()", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_DISCARD' | translate}}", tooltip-append-to-body="true")
 								span.icon-close
 							ul.dropdown-menu(role="menu", dropdown-menu)
 								li.yesno.table-list

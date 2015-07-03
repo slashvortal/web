@@ -31,6 +31,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	$scope.isXCC = false;
 	$scope.isCC = false;
 	$scope.isBCC = false;
+
 	$scope.isDraftWarning = false;
 	$scope.isSkipWarning = user.settings.isSkipComposeScreenWarning;
 	$scope.attachments = [];
@@ -349,8 +350,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		$scope.isSkipWarning = !$scope.isSkipWarning;
 	};
 
-	$scope.isValid = () => true;//$scope.__form.$valid &&
-		//$scope.form && $scope.form.selected.to.length > 0;
+	$scope.isValid = () => $scope.__form.$valid &&
+		$scope.form && $scope.form.selected.to.length > 0;
 
 	$scope.send = () => co(function *() {
 		$scope.isSending = true;
@@ -370,7 +371,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 				cc = $scope.form.selected.cc.map(e => e.email),
 				bcc = $scope.form.selected.bcc.map(e => e.email);
 
-			let keys = composeHelpers.getKeys($scope.form.selected.to, $scope.form.selected.cc, $scope.form.selected.bcc);
+			let keys = yield composeHelpers.getKeys($scope.form.selected.to, $scope.form.selected.cc, $scope.form.selected.bcc);
 			const isSecured = Email.isSecuredKeys(keys);
 
 			yield $scope.attachments.map(attachmentStatus => $scope.uploadAttachment(attachmentStatus, keys));
@@ -445,10 +446,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	});
 
 	$scope.close = () => {
-		console.log(isExistingDraft, isChanged());
 		if (!isExistingDraft && isChanged()) {
 			$scope.isDraftWarning = true;
-			console.log('isDraftWarning = true now');
 		}
 		else
 			router.hidePopup();
