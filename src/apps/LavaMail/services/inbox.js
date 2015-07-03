@@ -168,7 +168,7 @@ module.exports = function($q, $rootScope, $timeout,
 	});
 
 	this.createFile = (file) => co(function *(){
-		return yield LavaboomAPI.files.create(file);
+		return (yield LavaboomAPI.files.create(file)).body.file;
 	});
 
 	this.updateFile = (fileId, file) => co(function *(){
