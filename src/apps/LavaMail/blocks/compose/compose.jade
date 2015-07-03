@@ -1,6 +1,6 @@
 - var defs = {};
 div#compose-wrapper
-	form#compose(name="__form", ng-class="{ warning: isWarning, 'has-formatting' : isToolbarShown, 'has-attachment': attachments.length }")
+	form#compose(name="__form", ng-submit="send()", ng-class="{ warning: isWarning, 'has-formatting' : isToolbarShown, 'has-attachment': attachments.length }")
 		.filters.row.no-gutter.lava-icon-row.z1
 			nav.navbar.navbar-inverse(role="navigation")
 				div
@@ -14,6 +14,24 @@ div#compose-wrapper
 					ul.nav.navbar-nav.navbar-right
 						li(ng-show="isError")
 							span {{'LAVAMAIL.COMPOSE.LB_ERROR' | translate}}
+						li.btn-group.dropdown(dropdown, is-open="isWarning")
+							button.btn.btn-default(ng-disabled="isWarning || !isValid() || isSending", type="submit", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_SEND' | translate}}", tooltip-append-to-body="true")
+								span.icon-sent
+							ul.dropdown-menu(role="menu", dropdown-menu)
+								li
+									p {{'LAVAMAIL.COMPOSE.LB_WARNING' | translate}}
+									p {{'LAVAMAIL.COMPOSE.LB_WARNING_2' | translate}}
+								li.yesno.table-list
+									a.btn.cell(type="button", ng-click="confirm()")
+										span.icon-sent
+										span {{'LAVAMAIL.COMPOSE.BTN_CONFIRM' | translate}}
+									a.btn.cell(type="button", ng-click="reject()")
+										span.icon-close
+										span {{'LAVAMAIL.COMPOSE.BTN_REJECT' | translate}}
+								li.dropdown-checkbox.text-center
+									.checkbox
+										input#check1(type='checkbox', name="isSkipWarning", ng-model="isSkipWarning")
+										label(for='isSkipWarning', ng-click="$event.stopPropagation(); toggleIsSkipWarning($event)") {{'LAVAMAIL.COMPOSE.LB_ASK_ME_AGAIN' | translate}}
 						li.btn-group.dropdown(dropdown, is-open="isDraftWarning")
 							button.btn.btn-default(type="button", dropdown-toggle, ng-click="close()", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_DISCARD' | translate}}", tooltip-append-to-body="true")
 								span.icon-close
