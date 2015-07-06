@@ -91,7 +91,7 @@ module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifes
 			date_created: file.created,
 			date_modified: file.modified,
 			members: file.meta.to
-		}, null, labels);
+		}, null);
 
 		let manifest = file.meta ? Manifest.createFromObject({headers: file.meta, parts: []}) : null;
 

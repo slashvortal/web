@@ -105,9 +105,9 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		};
 
 		if (draftId) {
-			yield inbox.updateFile(draftId, data);
+			yield inbox.updateDraft(draftId, data);
 		} else {
-			draftId = yield inbox.createFile(data);
+			draftId = yield inbox.createDraft(data);
 		}
 	});
 
