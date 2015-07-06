@@ -1,5 +1,5 @@
 module.exports = ($rootScope, $scope, $timeout, $state, $stateParams, $translate, $sanitize,
-							   user, utils, co, inbox, saver, notifications, Email) => {
+							   user, utils, co, inbox, saver, notifications, router, Email) => {
 
 	$scope.selfEmail = user.email;
 	$scope.labelName = utils.capitalize($state.params.labelName);
@@ -28,6 +28,11 @@ module.exports = ($rootScope, $scope, $timeout, $state, $stateParams, $translate
 	}
 
 	console.log('CtrlEmailList is loading', $scope.labelName, $scope.selectedTid);
+
+	$scope.performEmailAction = () => {
+		if ($scope.labelName == 'Drafts')
+			router.showPopup('compose', {draftId: $scope.selectedTid});
+	};
 
 	$scope.$on(`inbox-threads-ready`, (e, labelName, threads) => {
 		$scope.threads = utils.toMap(threads);
