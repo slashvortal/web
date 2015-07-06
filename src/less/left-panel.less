@@ -107,6 +107,7 @@
 
 			li {
 				list-style: none;
+				.pos-rel();
 				a{
 					padding-right: 0;
 					&:hover{
@@ -114,11 +115,12 @@
 							width: 9.5rem;
 						}
 						.icon-edit{
-							display: block;
+							
 							right: 0;
 							transition: .2s right;
 						}
 					}
+					overflow: hidden;
 				}
 				.action{
 					width: 12.6rem;
@@ -128,13 +130,16 @@
 					transition: .2s width;
 				}
 				.icon-edit{
-					display: none;
-					float: right;
-					left: 0;
+					display: block;
+					
+					
 					.lava-icon-22();
 					padding-left: 0;
-					position: relative;
+					position: absolute;
+					
+					top: 0;
 					right: -100%;
+					left: auto;
 					transition: .2s right;
 				}
 			}
