@@ -40,7 +40,7 @@ div(ng-if="selectedTid").main-view
 	div.logo.only-print
 		img(src="/img/Lavaboom-logo-gray.svg")
 	.row.no-gutter.mail(ng-repeat="email in emails")
-		.col-xs-24.table(ng-click="showPopup('compose', {draftId: selectedTid});")
+		.col-xs-24.table(ng-click="performEmailAction(email)")
 			div.email-left
 				span.icon-star.lava(ng-hide="true")
 			div.meta
