@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'lavaboom';
-	src:url('fonts/lavaboom.eot?-fiflg1');
-	src:url('fonts/lavaboom.eot?#iefix-fiflg1') format('embedded-opentype'),
-		url('fonts/lavaboom.ttf?-fiflg1') format('truetype'),
-		url('fonts/lavaboom.woff?-fiflg1') format('woff'),
-		url('fonts/lavaboom.svg?-fiflg1#lavaboom') format('svg');
+	src:url('fonts/lavaboom.eot?h5mrbf');
+	src:url('fonts/lavaboom.eot?#iefixh5mrbf') format('embedded-opentype'),
+		url('fonts/lavaboom.ttf?h5mrbf') format('truetype'),
+		url('fonts/lavaboom.woff?h5mrbf') format('woff'),
+		url('fonts/lavaboom.svg?h5mrbf#lavaboom') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -23,6 +23,12 @@
 	-moz-osx-font-smoothing: grayscale;
 }
 
+.icon-Icons_Save:before {
+	content: "\e627";
+}
+.icon-import-contacts:before {
+	content: "\e626";
+}
 .icon-H1:before {
 	content: "\e61d";
 }
