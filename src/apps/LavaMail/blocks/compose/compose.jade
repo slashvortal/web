@@ -1,26 +1,23 @@
 - var defs = {};
-div#compose-wrapper
+div#compose-wrapper(ng-controller="CtrlCompose")
 	form#compose(name="__form", ng-submit="send()", ng-class="{ warning: isWarning, 'has-formatting' : isToolbarShown, 'has-attachment': attachments.length }")
 		.filters.row.no-gutter.lava-icon-row.z1
 			nav.navbar.navbar-inverse(role="navigation")
 				div
-					ul.nav.navbar-nav(ng-show="selectedTid !== null")
+					ul.nav.navbar-nav
 						li
 							button.btn.btn-default(type="button", open-raw-file="addAttachment(file)", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_ATTACH' | translate}}", tooltip-append-to-body="true")
 								span.icon-paper-clip
 						li
 							button.btn.btn-default.lava-font(type="button", ng-click="toggleToolbar()", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_FORMATTING_OPTIONS' | translate}}", tooltip-append-to-body="true")
 								span A
-					ul.nav.navbar-nav.navbar-right(ng-show="selectedTid !== null")
+					ul.nav.navbar-nav.navbar-right
 						li(ng-show="isError")
 							span {{'LAVAMAIL.COMPOSE.LB_ERROR' | translate}}
-						//- li
-						//- 	button.btn.btn-default(ng-click="isXCC = !isXCC", ng-disabled="isWarning", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_XCC' | translate}}", tooltip-append-to-body="true")
-						//- 		span.icon-tick
-						li.btn-group.dropdown(dropdown="", is-open="isWarning")
+						li.btn-group.dropdown(dropdown, is-open="isWarning")
 							button.btn.btn-default(ng-disabled="isWarning || !isValid() || isSending", type="submit", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_SEND' | translate}}", tooltip-append-to-body="true")
 								span.icon-sent
-							ul.dropdown-menu(role="menu")
+							ul.dropdown-menu(role="menu", dropdown-menu)
 								li
 									p {{'LAVAMAIL.COMPOSE.LB_WARNING' | translate}}
 									p {{'LAVAMAIL.COMPOSE.LB_WARNING_2' | translate}}
@@ -35,9 +32,20 @@ div#compose-wrapper
 									.checkbox
 										input#check1(type='checkbox', name="isSkipWarning", ng-model="isSkipWarning")
 										label(for='isSkipWarning', ng-click="$event.stopPropagation(); toggleIsSkipWarning($event)") {{'LAVAMAIL.COMPOSE.LB_ASK_ME_AGAIN' | translate}}
-						li
-							button.btn.btn-default(type="button", ng-click="hidePopup()", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_DISCARD' | translate}}", tooltip-append-to-body="true")
+						li.btn-group.dropdown(dropdown, is-open="isDraftWarning")
+							button.btn.btn-default(type="button", ng-click="$event.stopPropagation(); close()", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_DISCARD' | translate}}", tooltip-append-to-body="true")
 								span.icon-close
+							ul.dropdown-menu(role="menu", dropdown-menu)
+								li.yesno.table-list
+									a.btn.cell(type="button", ng-click="saveDraft()")
+										span.icon-sent
+										span {{'LAVAMAIL.COMPOSE.DRAFTS.BTN_SAVE' | translate}}
+									a.btn.cell(type="button", ng-click="deleteDraft()")
+										span.icon-close
+										span {{'LAVAMAIL.COMPOSE.DRAFTS.BTN_DELETE' | translate}}
+									a.btn.cell(type="button", ng-click="cancelClose()")
+										span.icon-close
+										span {{'LAVAMAIL.COMPOSE.DRAFTS.BTN_GO_BACK' | translate}}
 		header#compose-header
 			.table-list
 				- defs = {model: "form.selected.to", label: "{{'LAVAMAIL.COMPOSE.LB_TO' | translate}}", click: "clearTo()", required: true};

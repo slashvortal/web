@@ -142,13 +142,29 @@ module.exports = ($delegate, $rootScope, $translate, co, consts, utils, Lavaboom
 
 		const [thread] = args;
 
-		const labelsRes = yield self.getLabels();
+		if (thread.name == 'draft') {
+			threadsCache.invalidate('Drafts');
+			$rootScope.$broadcast(`inbox-threads`, 'Drafts');
+		} else {
+			const labelsRes = yield self.getLabels();
 
-		thread.labels.forEach(labelId => {
-			const labelName = labelsRes.byId[labelId].name;
-			threadsCache.invalidate(labelName);
-			$rootScope.$broadcast(`inbox-threads`, labelName);
-		});
+			thread.labels.forEach(labelId => {
+				const labelName = labelsRes.byId[labelId].name;
+				threadsCache.invalidate(labelName);
+				$rootScope.$broadcast(`inbox-threads`, labelName);
+			});
+		}
+
+		return res;
+	});
+
+	proxy.methodCall('createDraft', function *(createDraft, args) {
+		const res = yield createDraft(...args);
+
+		const [draft] = args;
+
+		threadsCache.invalidate('Drafts');
+		$rootScope.$broadcast(`inbox-threads`, 'Drafts');
 
 		return res;
 	});

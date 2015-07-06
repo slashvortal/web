@@ -3,14 +3,17 @@
     "en_US": {
       "name": "English(US)"
     },
-    "de": {
+    "de_DE": {
       "name": "Deutsch (formal)"
     },
-    "fr": {
+    "fr_FR": {
       "name": "Français (vous)"
     },
-    "es": {
-      "name": "Spanish"
+    "es_ES": {
+      "name": "Español"
+    },
+    "pl_PL":{
+    "name": "Polski"
     }
   }
 }
