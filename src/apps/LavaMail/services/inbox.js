@@ -35,20 +35,29 @@ module.exports = function($q, $rootScope, $timeout,
 	});
 
 	this.requestDelete = (thread) => co(function *() {
-		const labels = yield self.getLabels();
+		console.log('delete', thread);
 
-		const trashLabelId = labels.byName.Trash.id;
-		const spamLabelId = labels.byName.Spam.id;
-		const draftsLabelId = labels.byName.Drafts ? labels.byName.Drafts.id : null;
+		if (thread.name == 'draft') {
+			return yield self.requestDeleteForcefully(thread);
+		} else {
+			let labels = yield self.getLabels();
 
-		const lbs = thread.labels;
-		return lbs.includes(trashLabelId) || lbs.includes(spamLabelId) || (draftsLabelId && lbs.includes(draftsLabelId))
-			? yield self.requestDeleteForcefully(thread)
-			: yield self.requestAddLabel(thread, 'Trash');
+			let trashLabelId = labels.byName.Trash.id;
+			let spamLabelId = labels.byName.Spam.id;
+			let draftsLabelId = labels.byName.Drafts ? labels.byName.Drafts.id : null;
+
+			let lbs = thread.labels;
+			return lbs.includes(trashLabelId) || lbs.includes(spamLabelId) || (draftsLabelId && lbs.includes(draftsLabelId))
+				? yield self.requestDeleteForcefully(thread)
+				: yield self.requestAddLabel(thread, 'Trash');
+		}
 	});
 
 	this.requestDeleteForcefully = (thread) => co(function *() {
-		yield LavaboomAPI.threads.delete(thread.id);
+		if (thread.name == 'draft')
+			yield LavaboomAPI.files.delete(thread.id);
+		else
+			yield LavaboomAPI.threads.delete(thread.id);
 	});
 
 	this.requestSetLabel = (thread, labelName) => co(function *() {
@@ -167,8 +176,16 @@ module.exports = function($q, $rootScope, $timeout,
 		return res.body.file ? yield File.fromEnvelope(res.body.file) : null;
 	});
 
+	this.createDraft = (draft) => co(function *(){
+		return (yield LavaboomAPI.files.create(draft)).body.file;
+	});
+
+	this.updateDraft = (draftId, draft) => co(function *(){
+		return yield LavaboomAPI.files.update(draftId, draft);
+	});
+
 	this.createFile = (file) => co(function *(){
-		return yield LavaboomAPI.files.create(file);
+		return (yield LavaboomAPI.files.create(file)).body.file;
 	});
 
 	this.updateFile = (fileId, file) => co(function *(){

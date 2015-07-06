@@ -31,6 +31,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	$scope.isXCC = false;
 	$scope.isCC = false;
 	$scope.isBCC = false;
+
+	$scope.isDraftWarning = false;
 	$scope.isSkipWarning = user.settings.isSkipComposeScreenWarning;
 	$scope.attachments = [];
 
@@ -38,6 +40,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 
 	let hiddenContacts = {};
 	let draftId = $stateParams.draftId;
+	let isExistingDraft = !!draftId;
 	let replyThreadId = $stateParams.replyThreadId;
 	let replyEmailId = $stateParams.replyEmailId;
 	let isReplyAll = $stateParams.isReplyAll;
@@ -65,6 +68,17 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	};
 	$translate.bindAsObject(translations, 'LAVAMAIL.COMPOSE');
 
+	let subject = '';
+	let body = '<br/>';
+
+	function isChanged() {
+		return $scope.form.selected.to.length > 0 ||
+		$scope.form.selected.cc.length > 0 ||
+		$scope.form.selected.bcc.length > 0 ||
+		$scope.form.subject != subject ||
+		$scope.form.body != body;
+	}
+
 	const saveAsDraft = () => co(function *(){
 		let key = user.key.armor();
 
@@ -90,7 +104,11 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 			tags: ['draft']
 		};
 
-		yield draftId ? inbox.updateFile(draftId, data) : inbox.createFile(data);
+		if (draftId) {
+			yield inbox.updateDraft(draftId, data);
+		} else {
+			draftId = yield inbox.createDraft(data);
+		}
 	});
 
 	const processAttachment = (attachmentStatus) => co(function *() {
@@ -188,9 +206,6 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 			console.log('$scope.people', $scope.people);
 
 			co(function *() {
-				let body = '<br/>';
-				let subject = '';
-
 				const signature = user.settings.isSignatureEnabled && user.settings.signatureHtml ? user.settings.signatureHtml : '';
 				if (forwardEmailId) {
 					let emails = [yield inbox.getEmailById(forwardEmailId)];
@@ -215,7 +230,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 					}]);
 				} else
 					body = yield composeHelpers.buildDirectTemplate(body, signature);
-				
+
 				if (replyThreadId && replyEmailId) {
 					let thread = yield inbox.getThreadById(replyThreadId);
 					let email = yield inbox.getEmailById(replyEmailId);
@@ -223,7 +238,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 					let to = (isReplyAll ? thread.members : email.from)
 						.map(m => ContactEmail.transform(m.address));
 
-					console.log('reply to', to);
+
+					subject = `Re: ${Email.getSubjectWithoutRe(thread.subject)}`;
 					$scope.form = {
 						person: {},
 						selected: {
@@ -233,7 +249,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 							from: contacts.myself
 						},
 						fromEmails: [contacts.myself],
-						subject: draft ? draft.meta.subject : `Re: ${Email.getSubjectWithoutRe(thread.subject)}`,
+						subject: draft ? draft.meta.subject : subject,
 						body: draft ? draft.body.data : body
 					};
 				} else {
@@ -251,7 +267,10 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 					};
 				}
 
-				autoSaveInterval = $interval(() => saveAsDraft(), consts.COMPOSE_AUTO_SAVE_INTERVAL);
+				autoSaveInterval = $interval(() => {
+					if (isExistingDraft || isChanged())
+						saveAsDraft();
+				}, consts.COMPOSE_AUTO_SAVE_INTERVAL);
 
 				console.log('$scope.form', $scope.form);
 			});
@@ -352,7 +371,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 				cc = $scope.form.selected.cc.map(e => e.email),
 				bcc = $scope.form.selected.bcc.map(e => e.email);
 
-			let keys = composeHelpers.getKeys($scope.form.selected.to, $scope.form.selected.cc, $scope.form.selected.bcc);
+			let keys = yield composeHelpers.getKeys($scope.form.selected.to, $scope.form.selected.cc, $scope.form.selected.bcc);
 			const isSecured = Email.isSecuredKeys(keys);
 
 			yield $scope.attachments.map(attachmentStatus => $scope.uploadAttachment(attachmentStatus, keys));
@@ -424,6 +443,31 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 			$scope.isError = true;
 			throw err;
 		}
+	});
+
+	$scope.close = () => {
+		if (!isExistingDraft && isChanged()) {
+			$scope.isDraftWarning = true;
+		}
+		else
+			router.hidePopup();
+	};
+
+	$scope.saveDraft = () => co(function *(){
+		yield saveAsDraft();
+
+		router.hidePopup();
+	});
+
+	$scope.deleteDraft = () => co(function *(){
+		if (draftId)
+			yield inbox.deleteDraft(draftId);
+
+		router.hidePopup();
+	});
+
+	$scope.cancelClose = () => co(function *(){
+		$scope.isDraftWarning = false;
 	});
 
 	$scope.reject = () => {
@@ -525,8 +569,6 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 
 	$scope.$on('$destroy',  () => {
 		$interval.cancel(autoSaveInterval);
-		if (!$scope.isSent)
-			saveAsDraft();
 	});
 
 	hotkey.registerCustomHotkeys($scope, [

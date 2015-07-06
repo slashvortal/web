@@ -23,7 +23,7 @@ module.exports = function () {
 	const base = path.resolve(__dirname, '..');
 
 	const dependencyDirectories = {
-		'bower':'bower_components',
+		'bower':'../bower_components',
 		'npm':'node_modules',
 		'vendor': 'vendor'
 	};
@@ -166,7 +166,7 @@ module.exports = function () {
 			console.log(`creating build task for plugin "${plugin.url}"...`);
 			let taskName = 'plugins:build:' + plugin.name;
 
-			gulp.task(taskName, gulp.series('plugins:install:' + plugin.name, () => {
+			gulp.task(taskName, gulp.series(() => {
 				let env = {};
 				for(let k of Object.keys(sharedEnvironment))
 					env[k] = sharedEnvironment[k];
@@ -389,8 +389,7 @@ module.exports = function () {
 		});
 	}
 
-	createInstallTasks(plugins);
-	createInstallTasks(coreApps);
+	let pluginsInstallTasks = createInstallTasks(plugins).concat(createInstallTasks(coreApps));
 
 	let pluginNames = plugins.map(p => p.name);
 
@@ -409,6 +408,7 @@ module.exports = function () {
 
 	return gulp.series(
 		'plugins:update',
+		gulp.series(pluginsInstallTasks),
 		gulp.parallel(pluginsTranslationTasks),
 		gulp.parallel(pluginsBuildTasks),
 		gulp.parallel(coreBuildTasks),

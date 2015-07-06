@@ -69,6 +69,7 @@ module.exports = ($rootScope, $scope, $timeout, $state, $stateParams, $translate
 
 	$scope.deleteThread = (tid) => {
 		console.log('deleteThread', tid, $scope.threads[tid]);
+
 		inbox.requestDelete($scope.threads[tid]);
 	};
 
