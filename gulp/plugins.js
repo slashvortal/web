@@ -23,7 +23,7 @@ module.exports = function () {
 	const base = path.resolve(__dirname, '..');
 
 	const dependencyDirectories = {
-		'bower':'bower_components',
+		'bower':'../bower_components',
 		'npm':'node_modules',
 		'vendor': 'vendor'
 	};
@@ -166,18 +166,18 @@ module.exports = function () {
 			console.log(`creating build task for plugin "${plugin.url}"...`);
 			let taskName = 'plugins:build:' + plugin.name;
 
-			let env = {};
-			for(let k of Object.keys(sharedEnvironment))
-				env[k] = sharedEnvironment[k];
+			gulp.task(taskName, gulp.series(() => {
+				let env = {};
+				for(let k of Object.keys(sharedEnvironment))
+					env[k] = sharedEnvironment[k];
 
-			let defaultTranslationPath = paths.translations.outputForPlugin(plugin.name) + config.defaultLanguageCode + '.json';
-			let indexPath = paths.translations.outputForPlugin(plugin.name) + 'index' + '.json';
-			if (fs.existsSync(defaultTranslationPath) && fs.existsSync(indexPath)) {
-				env.translationPath = defaultTranslationPath;
-				env.translationIndexPath = indexPath;
-			}
+				let defaultTranslationPath = path.resolve(__dirname, '..', paths.translations.outputForPlugin(plugin.name) + config.defaultLanguageCode + '.json');
+				let indexPath = path.resolve(__dirname, '..', paths.translations.outputForPlugin(plugin.name) + 'index' + '.json');
+				if (fs.existsSync(defaultTranslationPath) && fs.existsSync(indexPath)) {
+					env.translationPath = defaultTranslationPath;
+					env.translationIndexPath = indexPath;
+				}
 
-			gulp.task(taskName, gulp.series('plugins:install:' + plugin.name, () => {
 				return pipelines.browserifyBundle(base, plugin.path, sectionName, env, null, (bundler, config, isUpdate) => {
 					let isApplication = sectionName == 'APPLICATION';
 					let coreAppName = isApplication ? plugin.name : config.belongsTo;
@@ -238,7 +238,7 @@ module.exports = function () {
 	}
 
 	function verifyTranslations(name, translations) {
-		let enKeys = Object.keys(translations.en);
+		let enKeys = Object.keys(translations.en_US);
 		for(let langName of Object.keys(translations)) {
 			if (langName == 'index')
 				continue;
@@ -247,7 +247,7 @@ module.exports = function () {
 			let newTranslation = {};
 
 			for(let enKey of enKeys)
-				newTranslation[enKey] = enKey in translation ? translation[enKey] : translations.en[enKey];
+				newTranslation[enKey] = enKey in translation ? translation[enKey] : translations.en_US[enKey];
 
 			translations[langName] = newTranslation;
 		}
@@ -297,7 +297,7 @@ module.exports = function () {
 
 						let lang = translations[langName];
 
-						if (!lang['LANG.CODE'] || !lang['LANG.FULL_CODE'])
+						if (!lang['LANG.FULL_CODE'])
 							throw new Error(`Plugin '${name}': language file '${langName}' should have root LANG.CODE and LANG.FULL_CODE defined`);
 					}
 
@@ -389,8 +389,7 @@ module.exports = function () {
 		});
 	}
 
-	createInstallTasks(plugins);
-	createInstallTasks(coreApps);
+	let pluginsInstallTasks = createInstallTasks(plugins).concat(createInstallTasks(coreApps));
 
 	let pluginNames = plugins.map(p => p.name);
 
@@ -409,6 +408,7 @@ module.exports = function () {
 
 	return gulp.series(
 		'plugins:update',
+		gulp.series(pluginsInstallTasks),
 		gulp.parallel(pluginsTranslationTasks),
 		gulp.parallel(pluginsBuildTasks),
 		gulp.parallel(coreBuildTasks),

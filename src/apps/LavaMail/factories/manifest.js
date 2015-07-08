@@ -2,33 +2,11 @@ const mimelib = require('mimelib');
 const utf8 = require('utf8');
 const qEncoding = require('q-encoding');
 
-module.exports = ($translate, contacts, utils, crypto) => {
+module.exports = ($translate, contacts, utils, crypto, ManifestPart) => {
 	const translations = {
 		LB_NO_SUBJECT: ''
 	};
 	$translate.bindAsObject(translations, 'LAVAMAIL.INBOX');
-
-	function ManifestPart (manifestPart) {
-		const self = this;
-
-		this.id = manifestPart.id;
-		this.size = manifestPart.size;
-		this.filename = manifestPart.filename;
-		this.hash = manifestPart.hash;
-
-		this.isValid = (body) => body.length == self.size && crypto.hash(body) == self.hash;
-
-		const contentType = manifestPart.content_type;
-		if (contentType) {
-			this.contentType = (contentType.defaultValue ? contentType.defaultValue : contentType).toLowerCase();
-			this.charset = (contentType.charset ? contentType.charset : 'utf-8').toLowerCase();
-		} else {
-			this.contentType = 'text/plain';
-			this.charset = 'utf-8';
-		}
-
-		this.isHtml = () => self.contentType.includes('/html');
-	}
 
 	function Manifest (manifest) {
 		const self = this;
@@ -60,7 +38,10 @@ module.exports = ($translate, contacts, utils, crypto) => {
 			});
 		};
 
-		this.getPart = (id = 'body') => new ManifestPart(manifest.parts.find(p => p.id == id));
+		this.getPart = (id = 'body') => {
+			let part = manifest.parts.find(p => p.id == id);
+			return part ? new ManifestPart(part) : null;
+		};
 
 		this.files = manifest.parts.filter(p => p.id != 'body').map(p => new ManifestPart(p));
 
@@ -118,9 +99,12 @@ module.exports = ($translate, contacts, utils, crypto) => {
 	Manifest.create = ({fromEmail, to, cc, bcc, subject}) => {
 		function encode (s) {
 			return s;
-			/*return angular.isArray(s)
+			/*if (!s)
+				return s;
+
+			return angular.isArray(s)
 				? s.map(e => encode(e))
-				: qEncoding.encode(utf8.encode(s));*/
+				: '=?utf-8?Q?' + qEncoding.encode(utf8.encode(s)) + '?=';*/
 		}
 
 		const manifest = {
@@ -144,23 +128,16 @@ module.exports = ($translate, contacts, utils, crypto) => {
 		return new Manifest(manifest);
 	};
 
-	Manifest.createFromJson = (manifest) => {
-		function decode (s) {
-			if (!s)
-				return s;
+	function decode (s) {
+		if (!s)
+			return s;
 
-			return angular.isArray(s)
-				? s.map(e => decode(e))
-				: s.includes('=') ? utf8.decode(qEncoding.decode(s.replace(/=\?utf-8\?Q\?([^?]+)\?=/, '$1'))) : s;
-		}
+		return angular.isArray(s)
+			? s.map(e => decode(e))
+			: s.includes('=') ? utf8.decode(qEncoding.decode(s.replace(/=\?utf-8\?Q\?([^?]+)\?=/, '$1'))) : s;
+	}
 
-		let rawManifest;
-		try {
-			rawManifest = JSON.parse(manifest);
-		} catch (error) {
-			throw new Error('invalid manifest format!');
-		}
-
+	function processManifest(rawManifest) {
 		if (rawManifest.headers) {
 			rawManifest.headers.cc = decode(rawManifest.headers.cc);
 			rawManifest.headers.bcc = decode(rawManifest.headers.bcc);
@@ -168,6 +145,22 @@ module.exports = ($translate, contacts, utils, crypto) => {
 			rawManifest.headers.to = decode(rawManifest.headers.to);
 			rawManifest.headers.subject = decode(rawManifest.headers.subject);
 		}
+	}
+
+	Manifest.createFromObject = (rawManifest) => {
+		processManifest(rawManifest);
+		return new Manifest(rawManifest);
+	};
+
+	Manifest.createFromJson = (manifest) => {
+		let rawManifest;
+		try {
+			rawManifest = JSON.parse(manifest);
+		} catch (error) {
+			throw new Error('invalid manifest format!');
+		}
+
+		processManifest(rawManifest);
 
 		return new Manifest(rawManifest);
 	};

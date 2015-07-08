@@ -5,7 +5,10 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ## UNRELEASED
 ### Added
 - Spanish (provided by mortaldamm)
+- Polish (provided by dkol)
 - settings/security password change error validation  
+- styling settings to signature editor
+- auto-exit from account when user is idle longer than N
 
 ### Modified
 - settings/security and settings/keys - split
@@ -17,6 +20,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 - settings/security password change works correctly with Lavaboom Sync
 - refresh issue when refreshing an empty label
 - export keys now name files && emails correctly(styled)
+- pgp/mime support: text, html, attachments
 
 ## 0.4.6 - 2015-06-10
 ### Fixed
