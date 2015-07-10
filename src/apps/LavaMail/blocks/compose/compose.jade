@@ -36,14 +36,16 @@ div#compose-wrapper(ng-controller="CtrlCompose")
 							button.btn.btn-default(type="button", ng-click="$event.stopPropagation(); close()", tooltip="{{'LAVAMAIL.COMPOSE.TOOLTIP_DISCARD' | translate}}", tooltip-append-to-body="true")
 								span.icon-close
 							ul.dropdown-menu(role="menu", dropdown-menu)
-								li.yesno.table-list
-									a.btn.cell(type="button", ng-click="saveDraft()")
-										span.icon-sent
+								li
+									a(type="button", ng-click="saveDraft()")
+										span.icon-save
 										span {{'LAVAMAIL.COMPOSE.DRAFTS.BTN_SAVE' | translate}}
-									a.btn.cell(type="button", ng-click="deleteDraft()")
-										span.icon-close
+								li								
+									a(type="button", ng-click="deleteDraft()")
+										span.icon-trash
 										span {{'LAVAMAIL.COMPOSE.DRAFTS.BTN_DELETE' | translate}}
-									a.btn.cell(type="button", ng-click="cancelClose()")
+								li
+									a(type="button", ng-click="cancelClose()")
 										span.icon-close
 										span {{'LAVAMAIL.COMPOSE.DRAFTS.BTN_GO_BACK' | translate}}
 		header#compose-header

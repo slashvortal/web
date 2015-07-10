@@ -143,7 +143,12 @@ module.exports = ($rootScope, $scope, $timeout, $state, $stateParams, $translate
 		co(function *() {
 			$scope.isLoading = true;
 			try {
-				$scope.emails = transformEmails(yield inbox.getEmailsByThreadId(threadId));
+				if ($scope.labelName == 'Drafts') {
+					let draft = yield inbox.getDraftById($scope.selectedTid);
+
+					$scope.emails = transformEmails([yield Email.fromDraftFile(draft)]);
+				} else
+					$scope.emails = transformEmails(yield inbox.getEmailsByThreadId(threadId));
 			} finally {
 				$scope.isLoading = false;
 			}
