@@ -228,6 +228,10 @@ module.exports = ($delegate, $rootScope, $translate, co, consts, utils, Lavaboom
 		return setSortQuery(...args);
 	});
 
+	$delegate.getCachedThreadById = (threadId) => {
+		return threadsCache.getById(threadId);
+	};
+
 	$delegate.invalidateThreadCache = () => {
 		threadsCache.invalidateAll();
 	};

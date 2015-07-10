@@ -438,6 +438,11 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 			manifest = null;
 
 			$scope.isSent = true;
+
+			if (draftId) {
+				yield inbox.requestDelete(inbox.getCachedThreadById(draftId));
+			}
+
 			router.hidePopup();
 		} catch (err) {
 			$scope.isError = true;
