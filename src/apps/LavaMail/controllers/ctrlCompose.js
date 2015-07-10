@@ -454,8 +454,11 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		if (!isExistingDraft && isChanged()) {
 			$scope.isDraftWarning = true;
 		}
-		else
+		else {
+			if (isExistingDraft && isChanged())
+				saveAsDraft();
 			router.hidePopup();
+		}
 	};
 
 	$scope.saveDraft = () => co(function *(){

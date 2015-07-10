@@ -169,6 +169,18 @@ module.exports = ($delegate, $rootScope, $translate, co, consts, utils, Lavaboom
 		return res;
 	});
 
+
+	proxy.methodCall('updateDraft', function *(updateDraft, args) {
+		const res = yield updateDraft(...args);
+
+		const [draftId] = args;
+
+		emailsCache.invalidate(draftId);
+		$rootScope.$broadcast(`inbox-emails`, draftId);
+
+		return res;
+	});
+
 	proxy.methodCall('requestSetLabel', requestModifyLabelProxy);
 
 	proxy.methodCall('requestRemoveLabel', requestModifyLabelProxy);
