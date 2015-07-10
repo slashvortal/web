@@ -75,8 +75,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		return $scope.form.selected.to.length > 0 ||
 		$scope.form.selected.cc.length > 0 ||
 		$scope.form.selected.bcc.length > 0 ||
-		$scope.form.subject != subject ||
-		$scope.form.body != body;
+		$scope.form.subject.trim() != subject ||
+		$scope.form.body.trim() != body;
 	}
 
 	const saveAsDraft = () => co(function *(){
