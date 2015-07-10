@@ -465,8 +465,13 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	});
 
 	$scope.deleteDraft = () => co(function *(){
-		if (draftId)
-			yield inbox.deleteDraft(draftId);
+		if (draftId) {
+			let t = inbox.getCachedThreadById(draftId);
+			if (t)
+				yield inbox.requestDelete(t);
+			else
+				yield inbox.deleteDraft(draftId);
+		}
 
 		router.hidePopup();
 	});
