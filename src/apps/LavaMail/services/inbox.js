@@ -176,12 +176,14 @@ module.exports = function($q, $rootScope, $timeout,
 		return res.body.file ? yield File.fromEnvelope(res.body.file) : null;
 	});
 
-	this.createDraft = (draft) => co(function *(){
+	this.createDraft = (meta, body) => co(function *(){
+		let draft = yield File.toEnvelope(meta, body);
 		return (yield LavaboomAPI.files.create(draft)).body.file;
 	});
 
-	this.updateDraft = (draftId, draft) => co(function *(){
-		return yield LavaboomAPI.files.update(draftId, draft);
+	this.updateDraft = (draftId, meta, body) => co(function *(){
+		let draft = yield File.toEnvelope(meta, body);
+		return (yield LavaboomAPI.files.update(draftId, draft)).body.file;
 	});
 
 	this.createFile = (file) => co(function *(){
@@ -206,11 +208,10 @@ module.exports = function($q, $rootScope, $timeout,
 			//yield files.map(f => LavaboomAPI.files.delete(f.id));
 
 			let r =  files ? yield files.map(f => co(function *(){
-				let file = yield File.fromEnvelope(f);
-				const cachedThread = yield self.getThreadById(file.id, true);
+				const cachedThread = yield self.getThreadById(f.id, true);
 				if (cachedThread)
 					return cachedThread;
-				return yield co.def(Thread.fromDraftFile(file), null);
+				return yield co.def(Thread.fromDraftFile(f), null);
 			})) : [];
 
 			console.log('files', r);

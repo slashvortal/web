@@ -80,34 +80,18 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	}
 
 	const saveAsDraft = () => co(function *(){
-		let key = user.key.armor();
-
-		let [meta, body] = yield [
-			crypto.encodeWithKeys(JSON.stringify({
-				publicKey: publicKey,
-				to: $scope.form.selected.to ? $scope.form.selected.to.map(e => e.email) : [],
-				cc: $scope.form.selected.cc ? $scope.form.selected.cc.map(e => e.email) : [],
-				bcc: $scope.form.selected.bcc ? $scope.form.selected.bcc.map(e => e.email) : [],
-				subject: $scope.form.subject
-			}), [key]),
-
-			crypto.encodeWithKeys($scope.form.body, [key])
-		];
-
-		meta = btoa(crypto.messageToBinary(meta.pgpData));
-		body = btoa(crypto.messageToBinary(body.pgpData));
-
-		let data = {
-			name: 'draft',
-			meta: {meta: meta},
-			body: body,
-			tags: ['draft']
+		let meta = {
+			publicKey: publicKey,
+			to: $scope.form.selected.to ? $scope.form.selected.to.map(e => e.email) : [],
+			cc: $scope.form.selected.cc ? $scope.form.selected.cc.map(e => e.email) : [],
+			bcc: $scope.form.selected.bcc ? $scope.form.selected.bcc.map(e => e.email) : [],
+			subject: $scope.form.subject
 		};
 
 		if (draftId) {
-			yield inbox.updateDraft(draftId, data);
+			yield inbox.updateDraft(draftId, meta, $scope.form.body);
 		} else {
-			draftId = yield inbox.createDraft(data);
+			draftId = yield inbox.createDraft(meta, $scope.form.body);
 		}
 	});
 

@@ -39,8 +39,8 @@ div(ng-if="selectedTid").main-view
 		img(src="/img/loader.svg")
 	div.logo.only-print
 		img(src="/img/Lavaboom-logo-gray.svg")
-	.row.no-gutter.mail(ng-repeat="email in emails")
-		.col-xs-24.table(ng-click="performEmailAction(email)")
+	.row.no-gutter.mail(ng-repeat="email in emails", ng-click="performEmailAction(email)")
+		.col-xs-24.table
 			div.email-left
 				span.icon-star.lava(ng-hide="true")
 			div.meta
@@ -53,11 +53,7 @@ div(ng-if="selectedTid").main-view
 									| {{$last ? '' : ', '}}
 						div
 							.to {{'LAVAMAIL.COMPOSE.LB_TO' | translate}}
-							span.medium(ng-repeat="to in email.to")
-								email-context-menu(ng-if="to.address != selfEmail", email="to.address", is-open="to.isContextMenuOpened")
-									a(ui-sref=".popup.compose({to: to.address})", ng-right-click="to.isContextMenuOpened = true") {{to.prettyName}}
-									| {{$last ? '' : ', '}}
-								span(ng-if="to.address == selfEmail") {{to.prettyName}} {{$last ? '' : ', '}}
+							span.medium {{email.dstPretty}}
 						div
 							span(ng-bind="email.subject")
 					.when

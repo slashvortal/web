@@ -1,4 +1,4 @@
-module.exports = (co, utils, crypto) => {
+module.exports = (co, utils, crypto, user) => {
 	function File(opt) {
 		const self = this;
 
@@ -12,6 +12,25 @@ module.exports = (co, utils, crypto) => {
 		self.created = opt.date_created;
 		self.modified = opt.date_modified;
 	}
+
+	File.toEnvelope = (meta, body) => co(function *(){
+		let key = user.key.armor();
+
+		let [metaEncoded, bodyEncoded] = yield [
+			crypto.encodeWithKeys(JSON.stringify(meta), [key]),
+			crypto.encodeWithKeys(body, [key])
+		];
+
+		metaEncoded = btoa(crypto.messageToBinary(metaEncoded.pgpData));
+		bodyEncoded = btoa(crypto.messageToBinary(bodyEncoded.pgpData));
+
+		return {
+			name: 'draft',
+			meta: {meta: metaEncoded},
+			body: bodyEncoded,
+			tags: ['draft']
+		};
+	});
 
 	File.fromEnvelope = (envelope) => co(function *() {
 		try {
