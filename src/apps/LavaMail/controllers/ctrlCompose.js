@@ -89,9 +89,9 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		};
 
 		if (draftId) {
-			yield inbox.updateDraft(draftId, meta, body);
+			yield inbox.updateDraft(draftId, meta, $scope.form.body);
 		} else {
-			draftId = yield inbox.createDraft(meta, body);
+			draftId = yield inbox.createDraft(meta, $scope.form.body);
 		}
 	});
 
