@@ -53,11 +53,7 @@ div(ng-if="selectedTid").main-view
 									| {{$last ? '' : ', '}}
 						div
 							.to {{'LAVAMAIL.COMPOSE.LB_TO' | translate}}
-							span.medium(ng-repeat="to in email.to")
-								email-context-menu(ng-if="to.address != selfEmail", email="to.address", is-open="to.isContextMenuOpened")
-									a(ui-sref=".popup.compose({to: to.address})", ng-right-click="to.isContextMenuOpened = true") {{to.prettyName}}
-									| {{$last ? '' : ', '}}
-								span(ng-if="to.address == selfEmail") {{to.prettyName}} {{$last ? '' : ', '}}
+							span.medium {{email.dstPretty}}
 						div
 							span(ng-bind="email.subject")
 					.when

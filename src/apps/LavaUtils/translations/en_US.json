@@ -208,6 +208,7 @@
   "LAVAMAIL.INBOX.LB_AND_TWO_OTHERS": "and two others",
   "LAVAMAIL.INBOX.LB_EMAIL_HAS_EMBEDDED_STYLING": "This email contains embedded styling, do you want to display it?",
   "LAVAMAIL.INBOX.LB_EMAIL_TO_YOURSELF": "to yourself",
+  "LAVAMAIL.INBOX.LB_NO_DESTINATION": "no destination specified",
   "LAVAMAIL.INBOX.LB_NOTHING_FOUND": "Nothing found",
   "LAVAMAIL.INBOX.LB_NOTHING_SELECTED": "Nothing selected",
   "LAVAMAIL.INBOX.LB_NO_IMAGE": "External images blocked",

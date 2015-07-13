@@ -176,12 +176,14 @@ module.exports = function($q, $rootScope, $timeout,
 		return res.body.file ? yield File.fromEnvelope(res.body.file) : null;
 	});
 
-	this.createDraft = (draft) => co(function *(){
+	this.createDraft = (meta, body) => co(function *(){
+		let draft = yield File.toEnvelope(meta, body);
 		return (yield LavaboomAPI.files.create(draft)).body.file;
 	});
 
-	this.updateDraft = (draftId, draft) => co(function *(){
-		return yield LavaboomAPI.files.update(draftId, draft);
+	this.updateDraft = (draftId, meta, body) => co(function *(){
+		let draft = yield File.toEnvelope(meta, body);
+		return (yield LavaboomAPI.files.update(draftId, draft)).body.file;
 	});
 
 	this.createFile = (file) => co(function *(){
