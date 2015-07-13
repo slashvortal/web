@@ -80,7 +80,6 @@ module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifes
 
 	Thread.fromDraftFile = (file) => co(function *() {
 		let inbox = $injector.get('inbox');
-		let labels = yield inbox.getLabels();
 
 		let thread = new Thread({
 			id: file.id,
@@ -94,8 +93,6 @@ module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifes
 		}, null);
 
 		let manifest = file.meta ? Manifest.createFromObject({headers: file.meta, parts: []}) : null;
-
-		console.log('fromDraftFile manifest', manifest);
 
 		thread.setupManifest(manifest, true);
 
