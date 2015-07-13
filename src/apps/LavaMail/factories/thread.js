@@ -1,6 +1,6 @@
 const utf8 = require('utf8');
 
-module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifest) => {
+module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifest, File) => {
 	const translations = {
 		LB_EMAIL_TO_YOURSELF: ''
 	};
@@ -48,12 +48,17 @@ module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifes
 		self.isToYourself = false;
 		self.emails = opt.emails;
 
-		self.members = opt.members && opt.members.length > 0 ? filterMembers(Manifest.parseAddresses(opt.members)) : [];
-		self.membersPretty = prettify(self.members);
 		self.labels = opt.labels && opt.labels.length > 0 ? opt.labels : [];
 		self.isRead = !!opt.is_read;
 		self.secure = opt.secure;
 		self.isReplied = opt.emails && opt.emails.length > 1;
+
+		this.setMembers = (members) => {
+			self.members = members && members.length > 0 ? filterMembers(Manifest.parseAddresses(members)) : [];
+			self.membersPretty = prettify(self.members);
+		};
+
+		this.setMembers(opt.members);
 
 		this.setupManifest = (manifest, setIsLoaded = false) => {
 			isLoaded = setIsLoaded;
@@ -79,22 +84,29 @@ module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifes
 	}
 
 	Thread.fromDraftFile = (file) => co(function *() {
-		let inbox = $injector.get('inbox');
-
+		console.log('raw file', angular.copy(file));
 		let thread = new Thread({
 			id: file.id,
 			is_read: true,
 			tags: file.tags,
 			name: file.name,
-			subject: file.meta.subject,
-			date_created: file.created,
-			date_modified: file.modified,
-			members: file.meta.to
+			date_created: file.date_created,
+			date_modified: file.date_created
 		}, null);
 
-		let manifest = file.meta ? Manifest.createFromObject({headers: file.meta, parts: []}) : null;
+		co(function *(){
+			let manifestRaw;
+			try {
+				file = yield File.fromEnvelope(file);
+				thread.setMembers(file.meta.to);
 
-		thread.setupManifest(manifest, true);
+				manifestRaw = file.meta ? {headers: file.meta, parts: []} : null;
+			} catch (err) {
+				thread.setupManifest(null, true);
+				throw err;
+			}
+			thread.setupManifest(manifestRaw ? Manifest.createFromObject(manifestRaw) : null, true);
+		});
 
 		return thread;
 	});

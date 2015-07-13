@@ -206,11 +206,10 @@ module.exports = function($q, $rootScope, $timeout,
 			//yield files.map(f => LavaboomAPI.files.delete(f.id));
 
 			let r =  files ? yield files.map(f => co(function *(){
-				let file = yield File.fromEnvelope(f);
-				const cachedThread = yield self.getThreadById(file.id, true);
+				const cachedThread = yield self.getThreadById(f.id, true);
 				if (cachedThread)
 					return cachedThread;
-				return yield co.def(Thread.fromDraftFile(file), null);
+				return yield co.def(Thread.fromDraftFile(f), null);
 			})) : [];
 
 			console.log('files', r);
