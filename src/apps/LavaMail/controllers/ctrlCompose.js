@@ -75,39 +75,23 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		return $scope.form.selected.to.length > 0 ||
 		$scope.form.selected.cc.length > 0 ||
 		$scope.form.selected.bcc.length > 0 ||
-		$scope.form.subject != subject ||
-		$scope.form.body != body;
+		$scope.form.subject.trim() != subject ||
+		$scope.form.body.trim() != body;
 	}
 
 	const saveAsDraft = () => co(function *(){
-		let key = user.key.armor();
-
-		let [meta, body] = yield [
-			crypto.encodeWithKeys(JSON.stringify({
-				publicKey: publicKey,
-				to: $scope.form.selected.to ? $scope.form.selected.to.map(e => e.email) : [],
-				cc: $scope.form.selected.cc ? $scope.form.selected.cc.map(e => e.email) : [],
-				bcc: $scope.form.selected.bcc ? $scope.form.selected.bcc.map(e => e.email) : [],
-				subject: $scope.form.subject
-			}), [key]),
-
-			crypto.encodeWithKeys($scope.form.body, [key])
-		];
-
-		meta = btoa(crypto.messageToBinary(meta.pgpData));
-		body = btoa(crypto.messageToBinary(body.pgpData));
-
-		let data = {
-			name: 'draft',
-			meta: {meta: meta},
-			body: body,
-			tags: ['draft']
+		let meta = {
+			publicKey: publicKey,
+			to: $scope.form.selected.to ? $scope.form.selected.to.map(e => e.email) : [],
+			cc: $scope.form.selected.cc ? $scope.form.selected.cc.map(e => e.email) : [],
+			bcc: $scope.form.selected.bcc ? $scope.form.selected.bcc.map(e => e.email) : [],
+			subject: $scope.form.subject
 		};
 
 		if (draftId) {
-			yield inbox.updateDraft(draftId, data);
+			yield inbox.updateDraft(draftId, meta, $scope.form.body);
 		} else {
-			draftId = yield inbox.createDraft(data);
+			draftId = yield inbox.createDraft(meta, $scope.form.body);
 		}
 	});
 
@@ -438,6 +422,11 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 			manifest = null;
 
 			$scope.isSent = true;
+
+			if (draftId) {
+				yield inbox.requestDelete(inbox.getCachedThreadById(draftId));
+			}
+
 			router.hidePopup();
 		} catch (err) {
 			$scope.isError = true;
@@ -449,8 +438,11 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		if (!isExistingDraft && isChanged()) {
 			$scope.isDraftWarning = true;
 		}
-		else
+		else {
+			if (isExistingDraft && isChanged())
+				saveAsDraft();
 			router.hidePopup();
+		}
 	};
 
 	$scope.saveDraft = () => co(function *(){
@@ -460,8 +452,13 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	});
 
 	$scope.deleteDraft = () => co(function *(){
-		if (draftId)
-			yield inbox.deleteDraft(draftId);
+		if (draftId) {
+			let t = inbox.getCachedThreadById(draftId);
+			if (t)
+				yield inbox.requestDelete(t);
+			else
+				yield inbox.deleteDraft(draftId);
+		}
 
 		router.hidePopup();
 	});

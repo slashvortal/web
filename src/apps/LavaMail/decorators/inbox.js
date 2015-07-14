@@ -161,10 +161,24 @@ module.exports = ($delegate, $rootScope, $translate, co, consts, utils, Lavaboom
 	proxy.methodCall('createDraft', function *(createDraft, args) {
 		const res = yield createDraft(...args);
 
-		const [draft] = args;
+		const [meta, body] = args;
 
 		threadsCache.invalidate('Drafts');
 		$rootScope.$broadcast(`inbox-threads`, 'Drafts');
+
+		return res;
+	});
+
+
+	proxy.methodCall('updateDraft', function *(updateDraft, args) {
+		const res = yield updateDraft(...args);
+
+		const [draftId, meta, body] = args;
+		$delegate.getCachedThreadById(draftId).updateFromDraftMeta(meta);
+		$rootScope.$broadcast(`inbox-threads`, 'Drafts');
+
+		emailsCache.invalidate(draftId);
+		$rootScope.$broadcast(`inbox-emails`, draftId);
 
 		return res;
 	});
@@ -227,6 +241,10 @@ module.exports = ($delegate, $rootScope, $translate, co, consts, utils, Lavaboom
 		self.invalidateThreadCache();
 		return setSortQuery(...args);
 	});
+
+	$delegate.getCachedThreadById = (threadId) => {
+		return threadsCache.getById(threadId);
+	};
 
 	$delegate.invalidateThreadCache = () => {
 		threadsCache.invalidateAll();

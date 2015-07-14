@@ -1,8 +1,9 @@
 const utf8 = require('utf8');
 
-module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifest) => {
+module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifest, File) => {
 	const translations = {
-		LB_EMAIL_TO_YOURSELF: ''
+		LB_EMAIL_TO_YOURSELF: '',
+		LB_NO_DESTINATION: ''
 	};
 	$translate.bindAsObject(translations, 'LAVAMAIL.INBOX');
 
@@ -16,7 +17,7 @@ module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifes
 				.filter(e => !!e);
 
 			if (r.length < 1) {
-				r = [translations.LB_EMAIL_TO_YOURSELF];
+				r = [opt.name == 'draft' ? translations.LB_NO_DESTINATION : translations.LB_EMAIL_TO_YOURSELF];
 				self.isToYourself = true;
 			}
 
@@ -48,14 +49,19 @@ module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifes
 		self.isToYourself = false;
 		self.emails = opt.emails;
 
-		self.members = opt.members && opt.members.length > 0 ? filterMembers(Manifest.parseAddresses(opt.members)) : [];
-		self.membersPretty = prettify(self.members);
 		self.labels = opt.labels && opt.labels.length > 0 ? opt.labels : [];
 		self.isRead = !!opt.is_read;
 		self.secure = opt.secure;
 		self.isReplied = opt.emails && opt.emails.length > 1;
 
-		this.setupManifest = (manifest, setIsLoaded = false) => {
+		self.setMembers = (members) => {
+			self.members = members && members.length > 0 ? filterMembers(Manifest.parseAddresses(members)) : [];
+			self.membersPretty = prettify(self.members);
+		};
+
+		self.setMembers(opt.members);
+
+		self.setupManifest = (manifest, setIsLoaded = false) => {
 			isLoaded = setIsLoaded;
 
 			self.to = manifest ? manifest.to : [];
@@ -69,35 +75,46 @@ module.exports = ($injector, $translate, co, utils, crypto, user, Email, Manifes
 
 			self.attachmentsCount = manifest && manifest.files ? manifest.files.length : 0;
 		};
-		
-		this.isLoaded = () => isLoaded;
-		this.isLabel = (labelName) => self.labels.some(lid => labels.byId[lid] && labels.byId[lid].name == labelName);
-		this.addLabel = (labelName) => utils.uniq(self.labels.concat(labels.byName[labelName].id));
-		this.removeLabel = (labelName) => self.labels.filter(x => x != labels.byName[labelName].id);
+
+		self.updateFromDraftMeta = (meta) => {
+			let manifestRaw = {headers: meta, parts: []};
+
+			self.setupManifest(Manifest.createFromObject(manifestRaw), true);
+			self.setMembers(meta.to);
+		};
+
+		self.isLoaded = () => isLoaded;
+		self.isLabel = (labelName) => self.labels.some(lid => labels.byId[lid] && labels.byId[lid].name == labelName);
+		self.addLabel = (labelName) => utils.uniq(self.labels.concat(labels.byName[labelName].id));
+		self.removeLabel = (labelName) => self.labels.filter(x => x != labels.byName[labelName].id);
 
 		self.setupManifest(manifest);
 	}
 
 	Thread.fromDraftFile = (file) => co(function *() {
-		let inbox = $injector.get('inbox');
-		let labels = yield inbox.getLabels();
-
+		console.log('raw file', angular.copy(file));
 		let thread = new Thread({
 			id: file.id,
 			is_read: true,
 			tags: file.tags,
 			name: file.name,
-			subject: file.meta.subject,
-			date_created: file.created,
-			date_modified: file.modified,
-			members: file.meta.to
+			date_created: file.date_created,
+			date_modified: file.date_created
 		}, null);
 
-		let manifest = file.meta ? Manifest.createFromObject({headers: file.meta, parts: []}) : null;
+		co(function *(){
+			let manifestRaw;
+			try {
+				file = yield File.fromEnvelope(file);
+				thread.setMembers(file.meta.to);
 
-		console.log('fromDraftFile manifest', manifest);
-
-		thread.setupManifest(manifest, true);
+				manifestRaw = file.meta ? {headers: file.meta, parts: []} : null;
+			} catch (err) {
+				thread.setupManifest(null, true);
+				throw err;
+			}
+			thread.setupManifest(manifestRaw ? Manifest.createFromObject(manifestRaw) : null, true);
+		});
 
 		return thread;
 	});

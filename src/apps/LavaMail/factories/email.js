@@ -1,9 +1,15 @@
 const MailParser = require('mailparser').MailParser;
 const chan = require('chan');
 
-module.exports = (co, crypto, user, Manifest, ManifestPart) => {
+module.exports = ($translate, co, crypto, user, Manifest, ManifestPart) => {
 	const reRegex =
 		/([\[\(] *)?(RE?S?|FYI|RIF|I|FS|VB|RV|ENC|ODP|PD|YNT|ILT|SV|VS|VL|AW|WG|ΑΠ|ΣΧΕΤ|ΠΡΘ|תגובה|הועבר|主题|转发|FWD?) *([-:;)\]][ :;\])-]*|$)|\]+ *$/i;
+
+	const translations = {
+		LB_EMAIL_TO_YOURSELF: '',
+		LB_NO_DESTINATION: ''
+	};
+	$translate.bindAsObject(translations, 'LAVAMAIL.INBOX');
 
 	function Email (opt, manifest, files, isHtml = false) {
 		const self = this;
@@ -45,6 +51,18 @@ module.exports = (co, crypto, user, Manifest, ManifestPart) => {
 
 		this.bcc = manifest ? manifest.bcc : [];
 		this.bccPretty = prettify(self.bcc);
+
+		this.dstPretty = [];
+		if (this.toPretty)
+			this.dstPretty.push(this.toPretty);
+		if (this.ccPretty)
+			this.dstPretty.push('cc: ' + this.ccPretty);
+		if (this.bccPretty)
+			this.dstPretty.push('bcc: ' + this.bccPretty);
+		if (this.dstPretty.length < 1)
+			this.dstPretty = translations.LB_NO_DESTINATION;
+		else
+			this.dstPretty = this.dstPretty.join(', ');
 
 		this.preview = opt.preview;
 		this.body = opt.body;

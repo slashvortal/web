@@ -1,10 +1,10 @@
-# Lavaboom WEB Client [![Build Status](https://travis-ci.org/lavab/web.svg)](https://travis-ci.org/lavab/web)
+# Lavaboom WEB 
 
 <img src="https://mail.lavaboom.com/img/Lavaboom-logo.svg" align="right" width="200px" />
 
 Lavaboom's Web written using angular.js, jade, less
 
-Contains the whole web interface and client-side logic. Consists from 2 applications - thin singup/signin application and the core application. You can run the client locally for testing, or if you just want a faster front-end. Have fun.
+Contains the whole web interface and client-side logic. Consists from 2 applications - thin singup/signin application and the core application.
 
 ## Requirements
 
@@ -99,5 +99,5 @@ This most likely will cause build failure. Currently you will have to terminate 
 
 ## License
 
-This project is licensed under the MIT license. Check __license__ for more
+This project is licensed under the GPL v3 license. Check __license__ for more
 information.
