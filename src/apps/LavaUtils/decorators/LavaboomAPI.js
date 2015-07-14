@@ -23,8 +23,8 @@ module.exports = ($delegate, $rootScope, $translate, co, utils) => {
 				let genericReason = translate(`LAVABOOM.API.ERROR.${error.status}`);
 				return def ? `${def} (${genericReason})` : genericReason;
 			} catch (err) {
-				if (error.body && error.body.message)
-					return error.body.message;
+				if (error.body && error.body.error)
+					return error.body.error;
 
 				// huh? wtf!
 				try {
