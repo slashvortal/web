@@ -26,6 +26,16 @@
 				.text-control
 					label {{'LAVAMAIL.SETTINGS.PROFILE.LB_DISPLAY_NAME' | translate}}
 					input.form-control(ng-model="settings.displayName")
+		h4 Alternate Email
+		ul.list-group
+			li.list-group-item
+				.input-group
+					input.form-control(type="text")
+					.input-group-btn
+						a.btn
+							span.icon-cancel
+						a.btn
+							span.icon-yes
 		h4 {{'LAVAMAIL.SETTINGS.PROFILE.TITLE_SIGNATURE' | translate}}
 		ul.list-group
 			li.list-group-item
