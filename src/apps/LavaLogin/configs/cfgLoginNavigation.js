@@ -15,67 +15,45 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 			templateUrl: 'LavaLogin/login/loginOrSignup'
 		})
 
-		.state('decrypting', {
-			url: '/decrypting',
-			templateUrl: 'LavaLogin/login/decrypting'
-		})
-
 		.state('auth', {
 			url: '/auth',
 			templateUrl: 'LavaLogin/login/auth',
 			controller:'CtrlAuth'
 		})
 
-		.state('invite', {
-			url: '/invite',
-			templateUrl: 'LavaLogin/login/invite'
-		})
-
 		.state('secureUsername', {
 			url: '/secure',
-			templateUrl: 'LavaLogin/login/secureUsername',
+			templateUrl: 'LavaLogin/login/classic-secure-username',
 			controller:'CtrlSecureUsername'
 		})
 
 		.state('reservedUsername', {
 			url: '/reserved',
-			templateUrl: 'LavaLogin/login/reservedUsername',
+			templateUrl: 'LavaLogin/login/classic-reserved-username',
 			controller:'CtrlReservedUsername'
 		})
 
-		.state('verifyInvite', {
-			url: '/verify',
-			templateUrl: 'LavaLogin/login/verifyInvite',
-			controller:'CtrlVerify'
-		})
-
-		.state('verifyInviteConfigured', {
+		.state('verify', {
 			url: '/verify/{userName}/{inviteCode}',
-			templateUrl: 'LavaLogin/login/verifyInvite',
-			controller:'CtrlVerify'
-		})
-
-		.state('plan', {
-			url: '/plan',
-			templateUrl: 'LavaLogin/login/plan',
-			controller:'CtrlSelectPlan'
+			templateUrl: 'LavaLogin/login/classic-verify',
+			controller: 'CtrlVerify'
 		})
 
 		.state('details', {
 			url: '/details',
-			templateUrl: 'LavaLogin/login/details',
+			templateUrl: 'LavaLogin/login/classic-user-details',
 			controller:'CtrlDetails'
-		})
-
-		.state('choosePassword', {
-			url: '/password',
-			templateUrl: 'LavaLogin/login/choosePassword',
-			controller:'CtrlPassword'
 		})
 
 		.state('choosePasswordIntro', {
 			url: '/password/intro',
-			templateUrl: 'LavaLogin/login/choosePasswordIntro',
+			templateUrl: 'LavaLogin/login/classic-choose-password-intro',
+			controller:'CtrlPassword'
+		})
+
+		.state('choosePassword', {
+			url: '/password',
+			templateUrl: 'LavaLogin/login/classic-choose-password',
 			controller:'CtrlPassword'
 		})
 
@@ -95,10 +73,5 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 			url: '/keys/backup',
 			templateUrl: 'LavaLogin/login/backupKey',
 			controller: 'CtrlBackup'
-		})
-
-		.state('importKeys', {
-			url: '/keys/import',
-			templateUrl: 'LavaLogin/login/importKey'
 		});
 };
