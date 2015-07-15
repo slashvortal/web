@@ -1,8 +1,8 @@
-form.ng-cloak(ng-class="{'errors': currentErrorMessage}")
-	img.login-logo(src="#{resolveAsset('/img/Lavaboom-logo-no-shadow.svg')}")
-	p.lead {{'LAVALOGIN.INVITE.TITLE' | translate}}
-		
-	p
-		a.btn.btn-block.btn-lg.btn-default(ui-sref="secureUsername") {{'LAVALOGIN.INVITE.BTN_SEND_ME_INVITE' | translate}}
-	p
-		a.btn.btn-block.btn-lg.btn-primary(ui-sref="verifyInvite") {{'LAVALOGIN.INVITE.BTN_I_HAVE_INVITE_CODE' | translate}}
+div.demo-vh
+	include ./classic-user-details.jade
+div.demo-vh
+	include ./classic-secure-username.jade
+div.demo-vh
+	include ./classic-choose-password-intro.jade
+div.demo-vh
+	include ./classic-choose-password.jade

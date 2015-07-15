@@ -79,7 +79,7 @@ module.exports = function($q, $rootScope, $state, $timeout, $window, $translate,
 				: [];
 
 			yield setupSettings(account.body.user.settings);
-			setupUserBasicInformation(account.body.user.name, account.body.user.styled_name, account.body.user.type, account.body.alt_email, aliases);
+			setupUserBasicInformation(account.body.user.name, account.body.user.styled_name, account.body.user.type, account.body.user.alt_email, aliases);
 		});
 	}
 
@@ -266,6 +266,13 @@ module.exports = function($q, $rootScope, $state, $timeout, $window, $translate,
 				throw new Error('LS_ERROR');
 			}
 		}
+	});
+
+	this.changeAltEmail = (newEmail) => co(function* (){
+		return yield LavaboomAPI.accounts.create.setup({
+			username: self.name,
+			alt_email: newEmail
+		});
 	});
 
 	this.removeTokens = () => {
