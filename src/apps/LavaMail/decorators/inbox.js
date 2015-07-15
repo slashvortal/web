@@ -174,8 +174,12 @@ module.exports = ($delegate, $rootScope, $translate, co, consts, utils, Lavaboom
 		const res = yield updateDraft(...args);
 
 		const [draftId, meta, body] = args;
-		$delegate.getCachedThreadById(draftId).updateFromDraftMeta(meta);
-		$rootScope.$broadcast(`inbox-threads`, 'Drafts');
+
+		let cachedThread = $delegate.getCachedThreadById(draftId);
+		if (cachedThread) {
+			$delegate.getCachedThreadById(draftId).updateFromDraftMeta(meta);
+			$rootScope.$broadcast(`inbox-threads`, 'Drafts');
+		}
 
 		emailsCache.invalidate(draftId);
 		$rootScope.$broadcast(`inbox-emails`, draftId);
