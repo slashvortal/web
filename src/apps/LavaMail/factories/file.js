@@ -1,4 +1,4 @@
-module.exports = (co, utils, crypto, user) => {
+module.exports = (co, utils, crypto, user, Email) => {
 	function File(opt) {
 		const self = this;
 
@@ -13,40 +13,66 @@ module.exports = (co, utils, crypto, user) => {
 		self.modified = opt.date_modified;
 	}
 
-	File.toEnvelope = (meta, body) => co(function *(){
-		let key = user.key.armor();
+	File.toEnvelope = (meta, body, name, keys) => co(function *(){
+		if (name == 'attachment-raw')
+			return {
+				name,
+				meta: {meta: btoa(JSON.stringify(meta))},
+				body: btoa(btoa(body)),
+				tags: [name]
+			};
+
+		if (!keys)
+			keys = {};
+
+		const isSecured = Email.isSecuredKeys(keys);
+
+		if (isSecured)
+			keys[user.email] = user.key.armor();
+
+		keys = Email.keysMapToList(keys);
 
 		let [metaEncoded, bodyEncoded] = yield [
-			crypto.encodeWithKeys(JSON.stringify(meta), [key]),
-			crypto.encodeWithKeys(body, [key])
+			crypto.encodeWithKeys(JSON.stringify(meta), keys),
+			crypto.encodeWithKeys(body, keys)
 		];
 
 		metaEncoded = btoa(crypto.messageToBinary(metaEncoded.pgpData));
 		bodyEncoded = btoa(crypto.messageToBinary(bodyEncoded.pgpData));
 
 		return {
-			name: 'draft',
+			name,
 			meta: {meta: metaEncoded},
 			body: bodyEncoded,
-			tags: ['draft']
+			tags: [name]
 		};
 	});
 
 	File.fromEnvelope = (envelope) => co(function *() {
-		try {
-			let [body, meta] = yield [crypto.decodeRaw(envelope.body, true), crypto.decodeRaw(envelope.meta.meta, true)];
-
+		if (name == 'attachment-raw') {
 			envelope.body = {
-				data: body,
+				data: atob(envelope.body),
 				state: 'ok'
 			};
-			envelope.meta = JSON.parse(meta);
-		} catch (err) {
-			envelope.body = {
-				data: '',
-				state: err.message
-			};
-			envelope.meta = {};
+			envelope.meta = JSON.parse(atob(envelope.meta));
+		}
+		else
+		{
+			try {
+				let [body, meta] = yield [crypto.decodeRaw(envelope.body, true), crypto.decodeRaw(envelope.meta.meta, true)];
+
+				envelope.body = {
+					data: body,
+					state: 'ok'
+				};
+				envelope.meta = JSON.parse(meta);
+			} catch (err) {
+				envelope.body = {
+					data: '',
+					state: err.message
+				};
+				envelope.meta = {};
+			}
 		}
 
 		let r = new File(envelope);
