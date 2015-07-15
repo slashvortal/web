@@ -313,8 +313,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		let r;
 		attachmentStatus.status = translations.LB_ATTACHMENT_STATUS_UPLOADING;
 		try {
-			r = yield inbox.uploadAttachment(envelope);
-			attachmentStatus.id = r.body.file;
+			attachmentStatus.id = yield inbox.uploadAttachment(envelope);
 			attachmentStatus.status = translations.LB_ATTACHMENT_STATUS_UPLOADED;
 		} catch (err) {
 			attachmentStatus.status = translations.LB_ATTACHMENT_STATUS_UPLOADING_ERROR;
