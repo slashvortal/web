@@ -293,8 +293,15 @@ module.exports = function($q, $rootScope, $state, $timeout, $window, $translate,
 		token = '';
 	};
 
+	this.isAccountClosed = () => sessionStorage['lava-closed'] === '1';
+
+	this.resetIsAccountClosedFlag = () => delete sessionStorage['lava-closed'];
+
+	this.deleteAccount = () => co(function *(){
+		sessionStorage['lava-closed'] = '1';
+	});
+
 	this.logout = () => co(function *(){
-		console.log('logout');
 		self.logoutFromMemory();
 
 		yield $state.go('empty');

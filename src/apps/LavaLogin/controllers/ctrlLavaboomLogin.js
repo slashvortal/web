@@ -30,18 +30,22 @@ module.exports = ($q, $rootScope, $state, $scope, $translate,
 
 			$rootScope.isInitialized = true;
 
-			console.log('opts', opts);
-			if (opts) {
-				signUp.isPartiallyFlow = !!opts.state;
-				if (signUp.isPartiallyFlow) {
-					yield user.authenticate();
+			if (user.isAccountClosed())
+				yield $state.go('closedAccountFeedback', {}, {reload: true});
+			else {
 
-					yield $state.go(opts.state);
+				console.log('opts', opts);
+				if (opts) {
+					signUp.isPartiallyFlow = !!opts.state;
+					if (signUp.isPartiallyFlow) {
+						yield user.authenticate();
+
+						yield $state.go(opts.state);
+					}
+				} else {
+					yield $state.go('login', {}, {reload: true});
 				}
-			} else {
-				yield $state.go('login', {}, {reload: true});
 			}
-
 
 			return {lbDone: translations.LB_SUCCESS};
 		} catch (error) {

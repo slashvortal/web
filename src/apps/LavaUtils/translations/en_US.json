@@ -160,6 +160,11 @@
   "LAVALOGIN.VERIFY_INVITE.PLC_INVITE_CODE": "please paste invite code here",
   "LAVALOGIN.VERIFY_INVITE.TITLE": "Verify invite code",
 
+  "LAVALOGIN.ACCOUNT_CLOSED_FEEDBACK.TITLE": "Your account is gone, we miss you already.",
+  "LAVALOGIN.ACCOUNT_CLOSED_FEEDBACK.LB_TEXT1": "What can we do better?",
+  "LAVALOGIN.ACCOUNT_CLOSED_FEEDBACK.LB_TEXT2": "We know you are busy. If you give us a short feedback in the field below, we would highly appreciate!",
+  "LAVALOGIN.ACCOUNT_CLOSED_FEEDBACK.BTN_SEND_FEEDBACK": "Submit feedback",
+
   "LAVAMAIL.CONTEXT_MENU.EMAIL.LB_ADD_CONTACT": "Add contact",
   "LAVAMAIL.CONTEXT_MENU.EMAIL.LB_REPLY": "Reply",
   "LAVAMAIL.HOTKEY.ARCHIVE_EMAIL": "Archive email",
@@ -402,6 +407,8 @@
   "LAVAMAIL.SETTINGS.PROFILE.LB_USERNAME": "Username",
   "LAVAMAIL.SETTINGS.PROFILE.TITLE_NAME": "Name",
   "LAVAMAIL.SETTINGS.PROFILE.TITLE_ALTERNATE_EMAIL": "Alternate Email",
+  "LAVAMAIL.SETTINGS.PROFILE.TITLE_ACCOUNT": "Account",
+  "LAVAMAIL.SETTINGS.PROFILE.BTN_CLOSE_ACCOUNT": "Close Account",
   "LAVAMAIL.SETTINGS.PROFILE.TITLE_NEWSLETTER": "Newsletter",
   "LAVAMAIL.SETTINGS.PROFILE.TITLE_SIGNATURE": "Signature",
   "LAVAMAIL.SETTINGS.PROFILE.LB_CANNOT_CHANGE_ALT_EMAIL": "Can't change your alternate email - {{error}}!",
@@ -453,6 +460,19 @@
   "LAVAMAIL.SETTINGS.SECURITY.TP_KEY_IS_DECRYPTED": "This key is decrypted and can be used to access your emails/contacts",
   "LAVAMAIL.SETTINGS.SECURITY.TP_KEY_IS_ENCRYPTED": "This key is still encrypted",
   "LAVAMAIL.SETTINGS.KEYS.YOUR_KEY_PAIRS": "Your Key Pairs",
+
+  "LAVAMAIL.CLOSE_ACCOUNT_WARNING_DIALOG.TITLE" : "Attention! Danger Zone!",
+  "LAVAMAIL.CLOSE_ACCOUNT_WARNING_DIALOG.LB_TEXT1" : "We are very sorry, you want to leave Lavaboom!",
+  "LAVAMAIL.CLOSE_ACCOUNT_WARNING_DIALOG.LB_TEXT2" : "Please note that all your data will be erased completely. We don't keep a thing.",
+  "LAVAMAIL.CLOSE_ACCOUNT_WARNING_DIALOG.BTN_CANCEL" : "Cancel",
+  "LAVAMAIL.CLOSE_ACCOUNT_WARNING_DIALOG.BTN_CONTINUE" : "Continue",
+
+  "LAVAMAIL.CLOSE_ACCOUNT_CONFIRM_DIALOG.TITLE" : "Close Account",
+  "LAVAMAIL.CLOSE_ACCOUNT_CONFIRM_DIALOG.LB_TEXT1" : "All your emails, contacts, personal and payment data will be erased.",
+  "LAVAMAIL.CLOSE_ACCOUNT_CONFIRM_DIALOG.LB_TEXT2" : "For you this means, that even if you close your account by mistake, we can neither restore your account nor your data afterwards!",
+  "LAVAMAIL.CLOSE_ACCOUNT_CONFIRM_DIALOG.LB_TEXT3" : "So please only continue, when you are absolutely sure. Once you hit the Close Account-Button, there will be no way back!",
+  "LAVAMAIL.CLOSE_ACCOUNT_CONFIRM_DIALOG.BTN_CANCEL" : "Cancel",
+  "LAVAMAIL.CLOSE_ACCOUNT_CONFIRM_DIALOG.BTN_CONTINUE" : "Close Account",
 
   "LAVAMAIL.LABEL.INBOX": "Inbox",
   "LAVAMAIL.LABEL.SENT": "Sent",

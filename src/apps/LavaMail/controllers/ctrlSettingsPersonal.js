@@ -1,4 +1,4 @@
-module.exports = ($scope, $timeout, $translate, user, co, notifications) => {
+module.exports = ($scope, $timeout, $translate, user, co, notifications, dialogs) => {
 	$scope.toolbar = [
 		['h1', 'h2', 'h3'],
 		['bold', 'italics', 'underline'],
@@ -26,6 +26,14 @@ module.exports = ($scope, $timeout, $translate, user, co, notifications) => {
 	});
 
 	let updateTimeout = null;
+
+
+	$scope.closeAccount = () => co(function* (){
+		yield co.def(dialogs.create(
+			'LavaMail/closeAccount/closeAccount',
+			'CtrlCloseAccount'
+		).result, 'cancelled');
+	});
 
 	$scope.changeAltEmail = () => {
 		$scope.isAltEmailEditMode = true;

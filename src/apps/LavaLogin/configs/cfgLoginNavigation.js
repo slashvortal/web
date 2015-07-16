@@ -100,5 +100,11 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 		.state('importKeys', {
 			url: '/keys/import',
 			templateUrl: 'LavaLogin/login/importKey'
+		})
+
+		.state('closedAccountFeedback', {
+			url: '/account/closed/feedback',
+			templateUrl: 'LavaLogin/misc/accountClosedFeedback',
+			controller: 'CtrlAccountClosedFeedback'
 		});
 };
