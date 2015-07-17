@@ -308,11 +308,12 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 				throw new Error('cancelled');
 		}
 
+		console.log('uploadAttachment, envelope ', envelope);
+
 		let r;
 		attachmentStatus.status = translations.LB_ATTACHMENT_STATUS_UPLOADING;
 		try {
-			r = yield inbox.uploadAttachment(envelope);
-			attachmentStatus.id = r.body.file.id;
+			attachmentStatus.id = yield inbox.uploadAttachment(envelope);
 			attachmentStatus.status = translations.LB_ATTACHMENT_STATUS_UPLOADED;
 		} catch (err) {
 			attachmentStatus.status = translations.LB_ATTACHMENT_STATUS_UPLOADING_ERROR;
@@ -378,6 +379,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 			try {
 				let body = composeHelpers.cleanupOutboundEmail($scope.form.body);
 
+				console.log('$scope.attachments', $scope.attachments);
+
 				yield inbox.send({
 					body: body,
 					attachmentIds: $scope.attachments.map(a => a.id),
@@ -423,11 +426,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 
 			$scope.isSent = true;
 
-			if (draftId) {
-				yield inbox.requestDelete(inbox.getCachedThreadById(draftId));
-			}
-
-			router.hidePopup();
+			yield $scope.deleteDraft();
 		} catch (err) {
 			$scope.isError = true;
 			throw err;

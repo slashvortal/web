@@ -1,4 +1,4 @@
-module.exports = (co, user, crypto, utils, fileReader, Email) => {
+module.exports = (co, user, crypto, utils, fileReader, Email, File) => {
 	function Attachment(file) {
 		const self = this;
 
@@ -22,32 +22,16 @@ module.exports = (co, user, crypto, utils, fileReader, Email) => {
 	Attachment.toEnvelope = (attachment, keys) => co(function *() {
 		const isSecured = Email.isSecuredKeys(keys);
 
-		if (isSecured)
-			keys[user.email] = user.key.armor();
-		const publicKeys = isSecured ? Email.keysMapToList(keys) : [];
-
-		const envelope = yield crypto.encodeEnvelopeWithKeys({
-			data: attachment.body
-		}, publicKeys, 'data');
-		envelope.name = isSecured ? attachment.id + '.pgp' : attachment.name;
-
-		console.log('attachment envelope', envelope, isSecured, keys);
-
-		return envelope;
+		return File.toEnvelope(
+			{},
+			utils.Uint8Array2str(attachment.body),
+			isSecured ? 'attachment' : 'attachment-raw',
+			keys
+		);
 	});
 
 	Attachment.fromEnvelope = (envelope) => co(function *() {
-		const data = yield crypto.decodeEnvelope(envelope, 'data');
-
-		switch (data.majorVersion) {
-			default:
-				return new Attachment(angular.extend({}, {
-					id: envelope.id,
-					name: envelope.name,
-					dateCreated: envelope.date_created,
-					dateModified: envelope.date_modified
-				}, data.data));
-		}
+		return File.fromEnvelope(envelope);
 	});
 
 	return Attachment;

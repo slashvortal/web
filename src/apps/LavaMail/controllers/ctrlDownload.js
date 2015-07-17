@@ -39,7 +39,6 @@ module.exports = ($rootScope, $scope, $stateParams, $interval, $timeout, $transl
 
 		if (fileId.includes('@')) {
 			let file = email.getFileById(fileId);
-			console.log(file.data);
 			saver.saveAs(file.data, file.filename);
 		} else {
 			let fileData = yield inbox.downloadAttachment(emailId, fileId);

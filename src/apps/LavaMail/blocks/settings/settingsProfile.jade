@@ -26,16 +26,22 @@
 				.text-control
 					label {{'LAVAMAIL.SETTINGS.PROFILE.LB_DISPLAY_NAME' | translate}}
 					input.form-control(ng-model="settings.displayName")
-		h4 Alternate Email
+		h4 {{'LAVAMAIL.SETTINGS.PROFILE.TITLE_ALTERNATE_EMAIL' | translate}}
 		ul.list-group
 			li.list-group-item.nouvo
 				.input-group
-					input.form-control(type="text")
-					.input-group-btn.on-focus
+					input.form-control(type="text", ng-model="altEmail", ng-focus="changeAltEmail()", ng-blur="cancelAltEmail(true)", ng-enter="confirmAltEmail()")
+					.input-group-btn(ng-show="isAltEmailEditMode")
 						a.btn
-							span.icon-cancel
+							span.icon-cancel(ng-click="cancelAltEmail()")
 						a.btn
-							span.icon-yes
+							span.icon-yes(ng-click="confirmAltEmail()")
+		h4 {{'LAVAMAIL.SETTINGS.PROFILE.TITLE_ACCOUNT' | translate}}
+		ul.list-group
+			li.list-group-item
+				.text-control.btn-control
+					.btn.btn-block.btn-warning(ng-click="closeAccount()") {{'LAVAMAIL.SETTINGS.PROFILE.BTN_CLOSE_ACCOUNT' | translate}}
+
 		h4 {{'LAVAMAIL.SETTINGS.PROFILE.TITLE_SIGNATURE' | translate}}
 		ul.list-group
 			li.list-group-item

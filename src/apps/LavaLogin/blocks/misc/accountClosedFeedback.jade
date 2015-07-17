@@ -1,0 +1,11 @@
+form.steps-form.ng-cloak(name="__form", ng-submit="__form.$valid && sendFeedback()", novalidate, ng-autodisable)
+	p.lead.pack {{'LAVALOGIN.ACCOUNT_CLOSED_FEEDBACK.TITLE' | translate}}
+
+	div
+		p {{'LAVALOGIN.ACCOUNT_CLOSED_FEEDBACK.LB_TEXT1' | translate}}
+		p {{'LAVALOGIN.ACCOUNT_CLOSED_FEEDBACK.LB_TEXT2' | translate}}
+	hr.blank
+	textarea(name="feedback", ng-model="feedback", style="width: 100%", required)
+	span.alert.alert-danger(ng-show="__form.$submitted", ng-messages="__form.feedback.$error", ng-messages-include="LavaLogin/misc/validationMessages")
+	footer
+		button.btn.btn-block.btn-lg.btn-primary(type="submit") {{'LAVALOGIN.ACCOUNT_CLOSED_FEEDBACK.BTN_SEND_FEEDBACK' | translate}}

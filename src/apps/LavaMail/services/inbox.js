@@ -139,11 +139,9 @@ module.exports = function($q, $rootScope, $timeout,
 	});
 
 	this.downloadAttachment = (email, attachmentId) => co(function *(){
-		const res =  yield LavaboomAPI.files.list({
-			email: email,
-			name: attachmentId + '.pgp'
-		});
-		let r = (yield crypto.decodeEnvelope(res.body.files[0], '', 'raw')).data;
+		console.log('downloadAttachment', attachmentId);
+		const res =  yield LavaboomAPI.files.get(attachmentId);
+		let r = (yield crypto.decodeEnvelope(res.body.file, '', 'raw')).data;
 
 		console.log('downloadAttachment', r);
 
@@ -151,7 +149,7 @@ module.exports = function($q, $rootScope, $timeout,
 	});
 
 	this.uploadAttachment = (envelope) => co(function *(){
-		return yield LavaboomHttpAPI.files.create(envelope);
+		return (yield LavaboomHttpAPI.files.create(envelope)).body.file;
 	});
 
 	this.deleteAttachment = (attachmentId) => co(function *(){
@@ -177,21 +175,13 @@ module.exports = function($q, $rootScope, $timeout,
 	});
 
 	this.createDraft = (meta, body) => co(function *(){
-		let draft = yield File.toEnvelope(meta, body);
+		let draft = yield File.toEnvelope(meta, body, 'draft');
 		return (yield LavaboomAPI.files.create(draft)).body.file;
 	});
 
 	this.updateDraft = (draftId, meta, body) => co(function *(){
-		let draft = yield File.toEnvelope(meta, body);
+		let draft = yield File.toEnvelope(meta, body, 'draft');
 		return (yield LavaboomAPI.files.update(draftId, draft)).body.file;
-	});
-
-	this.createFile = (file) => co(function *(){
-		return (yield LavaboomAPI.files.create(file)).body.file;
-	});
-
-	this.updateFile = (fileId, file) => co(function *(){
-		return yield LavaboomAPI.files.update(fileId, file);
 	});
 
 	this.requestList = (labelName, offset, limit) => co(function *() {
