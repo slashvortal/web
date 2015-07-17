@@ -28,7 +28,7 @@
 					input.form-control(ng-model="settings.displayName")
 		h4 {{'LAVAMAIL.SETTINGS.PROFILE.TITLE_ALTERNATE_EMAIL' | translate}}
 		ul.list-group
-			li.list-group-item
+			li.list-group-item.nouvo
 				.input-group
 					input.form-control(type="text", ng-model="altEmail", ng-focus="changeAltEmail()", ng-blur="cancelAltEmail(true)", ng-enter="confirmAltEmail()")
 					.input-group-btn(ng-show="isAltEmailEditMode")
