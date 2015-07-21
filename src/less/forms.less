@@ -28,14 +28,14 @@
 		margin: .2rem;
 		background: #FFF;
 		box-shadow: .3rem 0.4rem 0.2rem .1rem rgba(0, 0, 0, 0.2);
-		transition: all @lava-ease-out-in 0.2s;
+		transition: all cubic-bezier(.72,.74,.94,1) 0.2s;
 }
 .switch :checked + i {
 		padding-right: 0;
 		padding-left: 2.2rem;
 		background: #FFF;
 		box-shadow: inset 0 0 4rem 4rem @lava;
-		transition: all @lava-ease-out-in 0.2s;
+		transition: all cubic-bezier(.72,.74,.94,1)  0.2s;
 }
 
 .switch + span, .switch + label {
@@ -533,10 +533,10 @@ form.settings{
 				.pos-abs();
 				color: @lava-gray-light;
 				
-				top: 1.4rem;
+				top: 1.3rem;
 				font-size: 1.4rem;
 				line-height: 2.2rem;
-				right: 2rem;
+				right: 2.3rem;
 				&:before{
 					content: "\f0d7";
 				}
@@ -742,6 +742,10 @@ form.settings{
 		&:first-child{
 			margin-top: 8.8rem;
 		}
+	}
+
+	hgroup{
+		padding-left: 2.2rem;
 	}
 
 	footer{
