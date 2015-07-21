@@ -1,10 +1,10 @@
 @font-face {
 	font-family: 'lavaboom';
-	src:url('fonts/lavaboom.eot?-s83t1s');
-	src:url('fonts/lavaboom.eot?#iefix-s83t1s') format('embedded-opentype'),
-		url('fonts/lavaboom.ttf?-s83t1s') format('truetype'),
-		url('fonts/lavaboom.woff?-s83t1s') format('woff'),
-		url('fonts/lavaboom.svg?-s83t1s#lavaboom') format('svg');
+	src:url('fonts/lavaboom.eot?49y1lq');
+	src:url('fonts/lavaboom.eot?#iefix49y1lq') format('embedded-opentype'),
+		url('fonts/lavaboom.ttf?49y1lq') format('truetype'),
+		url('fonts/lavaboom.woff?49y1lq') format('woff'),
+		url('fonts/lavaboom.svg?49y1lq#lavaboom') format('svg');
 	font-weight: normal;
 	font-style: normal;
 }
@@ -24,9 +24,15 @@
 }
 
 .icon-caret-down:before {
-	content: "\f0d7";
+	content: "\e629";
 }
-.icon-Icons_Save:before {
+.icon-edit-circle:before {
+	content: "\e613";
+}
+.icon-key-pair-decrypt:before {
+	content: "\e62a";
+}
+.icon-save:before {
 	content: "\e627";
 }
 .icon-import-contacts:before {
@@ -101,8 +107,8 @@
 .icon-edit:before {
 	content: "\e612";
 }
-.icon-edit-circle:before {
-	content: "\e613";
+.icon-edit-circle2:before {
+	content: "\e614";
 }
 .icon-empty-trash:before {
 	content: "\e60a";
@@ -153,7 +159,7 @@
 	content: "\e615";
 }
 .icon-key-pair-download:before {
-	content: "\e614";
+	content: "\e616";
 }
 .icon-key-solid:before {
 	content: "\38";
@@ -192,7 +198,7 @@
 	content: "\34";
 }
 .icon-provide:before {
-	content: "\e616";
+	content: "\e617";
 }
 .icon-public-key-download:before {
 	content: "\e60c";
@@ -218,8 +224,8 @@
 .icon-reply-all:before {
 	content: "\e4";
 }
-.icon-save:before {
-	content: "\e617";
+.icon-save2:before {
+	content: "\e618";
 }
 .icon-search:before {
 	content: "\6f";
@@ -246,5 +252,5 @@
 	content: "\72";
 }
 .icon-yes:before {
-	content: "\e618";
+	content: "\e628";
 }
