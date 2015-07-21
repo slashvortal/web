@@ -1,23 +1,125 @@
-.key-pair{
-	border: @border-site-wide;
-	padding: .8rem;
-	list-style: none !important;
-	.header{
-		height: 5rem;
+.key-pairs {
+	
+	p{
+		margin-top: 0 !important;
 	}
-	.key-pair-details{
-		li{
-			display: flex;
+	
+	.key-pair{
+		border: @border-site-wide-light;
+		padding: 0 1.1rem 1.1rem;
+		.pos-rel();
+		[class^="icon-"], [class*=" icon-"] {
+			// .lava-icon-22();
+		}
+
+		.table-row{
+			padding: .8rem 0;
+			width: 100%;
+			table-layout: fixed;
 			> * {
-				// display: table-cell;
+				vertical-align: middle;
+			}
+		}
+		.btn > * {
+			display: block;
+			.text-center();
+		}
+
+
+		span.icon-key-pair {
+			color: @lava;
+			padding-top: 1.1rem;
+			padding-bottom: 1.1rem;
+			font-size: 4.4rem;
+			width: 4.4rem;
+		}
+
+		.btn {
+			width: 6.5rem;
+			padding: 0;
+			color: @lava;
+			&:not(:first-child){
+				border-left: @border-site-wide-light;
+			}
+			[class^="icon-"], [class*=" icon-"] {
+				color: @lava;		
+				font-size: 4.4rem;
+			}
+			height: 4.4rem;
+			span:last-child {
+				font-size: 1.1rem;
+			}
+		}
+		.btn.caret-btn{
+			width: 3.3rem;
+			padding: 0;
+		}
+
+		span.key-id{
+			display: block;
+			padding: 0 1.1rem;
+			font-size: 1.3rem;
+			min-width: 1;
+			> *{
+				display: block;
+			}
+			.key-id-id{
+				display: inline-block;
+				width: 100%;
+				.ellipsis();
+			}
+		}
+
+		.intro {
+			border-top: @border-site-wide-light;
+			font-style: italic;
+			padding: 2.2rem 1.1rem;
+			> * {
+				vertical-align: top;
+			}
+			span:first-child{
+				color: @lava;
+				width: 3.3rem;
+				.text-center();
+				padding-top: .3rem;
+			}
+
+			p{
+				margin-top: 0;
+				padding: 0;
+			}
+		}
+
+
+		.meta-row{
+			width: 100%;
+			font-style: normal;
+			display: table;
+			margin-bottom: 1.1rem;
+			> * {
+				display: table-cell;
 				width: 50%;
 			}
-			span{
+			label {
+
+			}
+			.value {
 				.text-right();
 			}
 		}
-	}
-	.keys{
-		.list-unstyled();
+
+		.key{
+			box-shadow: 0 0 5px rgba(0,0,0, 0.4);
+			&:not(:last-child){
+				margin-bottom: 1.1rem;
+			}
+			.key-details{
+				padding: 0 1.1rem;
+			}
+		}
+
+		.key-contents {
+			font-size: .9rem;
+		}
 	}
 }

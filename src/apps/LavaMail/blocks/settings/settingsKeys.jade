@@ -2,6 +2,207 @@
 	form.settings.col-xs-22.col-xs-offset-1.col-sm-20.col-sm-offset-2.col-md-12.col-md-offset-6.col-xs-22.col-xs-offset-1(name="__formChangePassword", ng-submit="__formChangePassword.$valid && changePassword()", novalidate, ng-autodisable)
 		.form-wrap
 			h4 {{'LAVAMAIL.SETTINGS.KEYS.YOUR_KEY_PAIRS' | translate}}
+			div.key-pairs(ng-repeat="key in keys")
+				p(ng-bind="key.email")
+				div.key-pair
+					.btn-add-icon
+						span.delete
+					.table-row(ng-click="key.switchCollapse(key)")
+						a.btn.caret-btn
+							span.icon-caret-down
+						span.icon-key-pair
+						div
+							span.key-id
+								strong Key Pair 
+								.key-id-id{{key.keyId}}
+								span (encrypted)
+						a.btn.decrypt
+							span.icon-key-pair-decrypt
+							span decrypt
+						a.btn.download
+							span.icon-key-pair-download2
+							span download
+					div.key-details(collapse="key.isCollapsed()")
+						div.intro
+							.table-row
+								span.icon-info-circle
+								p You can't use this KeyPair to open or send secure emails right now because it is encrypted. Decrypt it with the password you've used to encrypt it (most likely your account password).
+									br
+									a Learn more about your Encryption Keys.
+						div.intro
+							.meta-row
+								label Fingerprint
+								.value(ng-bind="key.fingerprintPretty")
+							.meta-row
+								label Key type
+								.value {{key.algos}}
+							.meta-row
+								label Key strength
+								.value {{key.length}}
+							.meta-row
+								label Created date
+								.value {{key.created | date}}
+							.meta-row
+								label Expiration date
+								.value {{key.expiredAt | date}}
+					.key.public
+						.table-row(ng-click="key.switchPublicCollapse(key)")
+							a.btn.caret-btn
+								span.icon-caret-down
+							span.icon-key-pair
+							div
+								span.key-id
+									strong Public Key
+									| (encrypted)
+							a.btn.decrypt(type="button", ng-click="sendKey(key)", ng-title="{{'LAVAMAIL.SETTINGS.SECURITY.SEND_PUBLIC_KEY' | translate}}")
+								span.icon-public-key-send
+								span share
+							a.btn.download(type="button", ng-click="exportPublicKey(key)". title="{{'LAVAMAIL.SETTINGS.SECURITY.EXPORT_PUBLIC_KEY' | translate}}")
+								span.icon-key-pair-download2
+								span download
+						div.key-details(collapse="key.isPublicCollapsed()")
+							div.intro.table-row
+								span.icon-info-circle
+								p This is your Public Key. Like the name says, it's public, so it's totally safe to share it. Your Public Key is used by your contacts to encrypt the emails they are sending you.
+									br
+									a Learn more about your Encryption Keys.
+							div.intro
+								.key-contents -----BEGIN PGP PUBLIC KEY BLOCK-----
+									| Version: OpenPGP.js v1.0.1
+									| Comment: http://openpgpjs.org
+
+									| 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
+									| bCZouA==
+									| =RtuA
+									| -----END PGP PUBLIC KEY BLOCK-----
+					.key.public
+						.table-row(ng-click="key.switchPrivateCollapse(key)")
+							a.btn.caret-btn
+								span.icon-caret-down
+							span.icon-key-pair
+							div
+								span.key-id
+									strong Private Key
+									| (encrypted)
+							a.btn.download(type="button", ng-click="exportPublicKey(key)". title="{{'LAVAMAIL.SETTINGS.SECURITY.EXPORT_PUBLIC_KEY' | translate}}")
+								span.icon-key-pair-download2
+								span download
+						div.key-details(collapse="key.isPrivateCollapsed()")
+							div.intro.table-row
+								span.icon-info-circle
+								p This is your Private Key. List the name says, it's private, so DO NOT share it with anyone! Your Private Key is used to decrypt your received Emails in your Inbox.
+									br
+									a Learn more about encryption keys
+							div.intro
+								.key-contents -----BEGIN PGP PUBLIC KEY BLOCK-----
+									| Version: OpenPGP.js v1.0.1
+									| Comment: http://openpgpjs.org
+
+									| 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
+									| bCZouA==
+									| =RtuA
+									| -----END PGP PUBLIC KEY BLOCK-----
+
+
+
+
+			h4 {{'LAVAMAIL.SETTINGS.KEYS.YOUR_KEY_PAIRS' | translate}} (old version)
 			div(ng-repeat="key in keys")
 				p(ng-bind="key.user")
 				ul.list-group.padded
@@ -49,51 +250,7 @@
 										button.cell.btn.btn-default(type="button", ng-click="sendKey(key)")
 											span.icon-public-key-send
 											| {{'LAVAMAIL.SETTINGS.SECURITY.SEND_PUBLIC_KEY' | translate}}
-			h4 {{'LAVAMAIL.SETTINGS.KEYS.YOUR_KEY_PAIRS' | translate}}
-			div(ng-repeat="key in keys")
-				p(ng-bind="key.email")
-				ul.key-pair
-					li.header
-						div.input-group.with-label.clickable(ng-click="key.switchCollapse(key)")
-							//- button.btn.btn-remove(type="button")
-							//- 	span.icon-delete
-							label.table-cell {{'LAVAMAIL.SETTINGS.SECURITY.LB_KEY_ID' | translate}}: {{key.keyId}}
-							input.form-control.text-right(type='text', disabled, ng-value="key.getTitle()", ng-show="key.isCollapsed()")
-							div.input-group-btn
-								button.btn.btn-default(title="{{key.getEncryptionStatusTooltip()}}")
-									span.icon-key-pair(ng-class="{encrypted: !key.isDecrypted()}")
-					li.key-pair-details(collapse="key.isCollapsed()")
-						ul.child-item.list-unstyled
-							li
-								label {{'LAVAMAIL.SETTINGS.SECURITY.LB_FINGERPRINT' | translate}}
-								div(ng-bind="key.fingerprintPretty")
-							li
-								label {{'LAVAMAIL.CONTACTS.LB_ALGORITHMS' | translate}}
-								span {{key.algos}}
-							li
-								label {{'LAVAMAIL.CONTACTS.LB_LENGTH' | translate}}
-								span {{key.length}}
-							li
-								label {{'LAVAMAIL.SETTINGS.SECURITY.LB_CREATION_DATE' | translate}}
-								span {{key.created | date}}
-							li
-								label {{'LAVAMAIL.SETTINGS.SECURITY.LB_EXPIRATION_DATE' | translate}}
-								span {{key.expiredAt | date}}
-							li
-								label(ng-show="key.isDecrypted()") {{'LAVAMAIL.SETTINGS.SECURITY.LB_DECRYPTED' | translate}}
-								label(ng-show="!key.isDecrypted()") {{'LAVAMAIL.SETTINGS.SECURITY.LB_PASSPHRASE' | translate}}
-								input.form-control(type='password', ng-class="{invisible: key.isDecrypted()}", ng-model="key.decryptPassword", ng-controller="CtrlSettingsSecurityKey", placeholder="Enter password")
-							//- li.list-group-item
-								.button-holder
-									button.cell.btn.btn-default(type="button", ng-click="exportPublicKey(key)")
-										span.icon-key-pair-download
-										| {{'LAVAMAIL.SETTINGS.SECURITY.EXPORT_PUBLIC_KEY' | translate}}
-									button.cell.btn.btn-default(type="button", ng-click="sendKey(key)")
-										span.icon-public-key-send
-										| {{'LAVAMAIL.SETTINGS.SECURITY.SEND_PUBLIC_KEY' | translate}}
-						ul.keys
-							li.key private key
-							li.key public-key
+				
 			div(ng-show="isAnyUndecryptedKeys") {{'LAVAMAIL.SETTINGS.SECURITY.LB_PASSPHRASE_NOTE' | translate}}
 			div(ng-show="!keys || keys.length < 1") {{'LAVAMAIL.SETTINGS.SECURITY.LB_KEY_NOTE' | translate}}
 			h4 {{'LAVAMAIL.SETTINGS.SECURITY.TITLE_KEYS_MANAGEMENT' | translate}}
