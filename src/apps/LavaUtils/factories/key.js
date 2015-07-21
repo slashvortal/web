@@ -31,9 +31,20 @@ module.exports = ($injector, $translate, $timeout, co, crypto, utils, consts, da
 				isCollapsed: true
 			};
 
+		if (!statuses[self.fingerprint + 'private'])
+			statuses[self.fingerprint + 'private'] = {
+				isPrivateCollapsed: true
+			};
+
+		if (!statuses[self.fingerprint + 'public'])
+			statuses[self.fingerprint + 'public'] = {
+				isPublicCollapsed: true
+			};
 		let isCollapsed = statuses[self.fingerprint].isCollapsed;
 		let decodeTimeout = null;
 		let decryptTime = 0;
+		let isPrivateCollapsed = statuses[self.fingerprint].isPrivateCollapsed;
+		let isPublicCollapsed = statuses[self.fingerprint].isPublicCollapsed;
 
 		this.getTitle = () =>
 			(self.isExpiringSoon ? `(${translations.LB_EXPIRING_SOON}) ` : '') +
@@ -49,6 +60,18 @@ module.exports = ($injector, $translate, $timeout, co, crypto, utils, consts, da
 		this.switchCollapse = () => {
 			isCollapsed = !isCollapsed;
 			statuses[self.fingerprint].isCollapsed = isCollapsed;
+		};
+
+		this.isPrivateCollapsed = () => isPrivateCollapsed;
+		this.switchPrivateCollapse = () => {
+			isPrivateCollapsed = !isPrivateCollapsed;
+			statuses[self.fingerprint + 'private'].isPrivateCollapsed = isPrivateCollapsed;
+		};
+
+		this.isPublicCollapsed = () => isPublicCollapsed;
+		this.switchPrivateCollapse = () => {
+			isPublicCollapsed = !isPublicCollapsed;
+			statuses[self.fingerprint + 'public'].isPublicCollapsed = isPublicCollapsed;
 		};
 
 		this.getEncryptionStatusTooltip = () => this.isDecrypted()
