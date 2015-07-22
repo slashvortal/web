@@ -1,4 +1,4 @@
-module.exports = ($injector, $translate, $timeout, co, crypto, utils, consts, dateFilter) => {
+module.exports = ($injector, $translate, $timeout, co, crypto, utils, consts, dateFilter, cryptoKeys) => {
 	const translations = {
 		TP_KEY_IS_ENCRYPTED: '',
 		TP_KEY_IS_DECRYPTED: '',
@@ -26,25 +26,22 @@ module.exports = ($injector, $translate, $timeout, co, crypto, utils, consts, da
 		this.user = key.users[0].userId.userid;
 		this.email = utils.getEmailFromAddressString(key.users[0].userId.userid);
 
+		this.privateArmor = cryptoKeys.exportPrivateKeyByFingerprint(self.fingerprint);
+		this.publicArmor = cryptoKeys.exportPublicKeyByFingerprint(self.fingerprint);
+
 		if (!statuses[self.fingerprint])
 			statuses[self.fingerprint] = {
-				isCollapsed: true
-			};
-
-		if (!statuses[self.fingerprint + 'private'])
-			statuses[self.fingerprint + 'private'] = {
+				isCollapsed: true,
+				isPublicCollapsed: true,
 				isPrivateCollapsed: true
 			};
 
-		if (!statuses[self.fingerprint + 'public'])
-			statuses[self.fingerprint + 'public'] = {
-				isPublicCollapsed: true
-			};
 		let isCollapsed = statuses[self.fingerprint].isCollapsed;
-		let decodeTimeout = null;
-		let decryptTime = 0;
 		let isPrivateCollapsed = statuses[self.fingerprint].isPrivateCollapsed;
 		let isPublicCollapsed = statuses[self.fingerprint].isPublicCollapsed;
+
+		let decodeTimeout = null;
+		let decryptTime = 0;
 
 		this.getTitle = () =>
 			(self.isExpiringSoon ? `(${translations.LB_EXPIRING_SOON}) ` : '') +
@@ -65,13 +62,13 @@ module.exports = ($injector, $translate, $timeout, co, crypto, utils, consts, da
 		this.isPrivateCollapsed = () => isPrivateCollapsed;
 		this.switchPrivateCollapse = () => {
 			isPrivateCollapsed = !isPrivateCollapsed;
-			statuses[self.fingerprint + 'private'].isPrivateCollapsed = isPrivateCollapsed;
+			statuses[self.fingerprint].isPrivateCollapsed = isPrivateCollapsed;
 		};
 
 		this.isPublicCollapsed = () => isPublicCollapsed;
-		this.switchPrivateCollapse = () => {
+		this.switchPublicCollapse = () => {
 			isPublicCollapsed = !isPublicCollapsed;
-			statuses[self.fingerprint + 'public'].isPublicCollapsed = isPublicCollapsed;
+			statuses[self.fingerprint].isPublicCollapsed = isPublicCollapsed;
 		};
 
 		this.getEncryptionStatusTooltip = () => this.isDecrypted()

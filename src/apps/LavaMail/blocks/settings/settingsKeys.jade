@@ -14,16 +14,17 @@
 						div
 							span.key-id
 								strong Key Pair 
-								.key-id-id{{key.keyId}}
-								span (encrypted)
-						a.btn.decrypt
+								.key-id-id {{key.keyId}}
+								span(ng-show="!key.isDecrypted()") (encrypted)
+								span(ng-show="key.isDecrypted()") (decrypted)
+						a.btn.decrypt(ng-click="$event.stopPropagation(); showPopup('decryptKey', {fingerprint: key.fingerprint})")
 							span.icon-key-pair-decrypt
 							span decrypt
-						a.btn.download
+						a.btn.download(ng-click="$event.stopPropagation(); exportKeys()")
 							span.icon-key-pair-download2
 							span download
 					div.key-details(collapse="key.isCollapsed()")
-						div.intro
+						div.intro(ng-show="!key.isDecrypted()")
 							.table-row
 								span.icon-info-circle
 								p You can't use this KeyPair to open or send secure emails right now because it is encrypted. Decrypt it with the password you've used to encrypt it (most likely your account password).
@@ -53,11 +54,10 @@
 							div
 								span.key-id
 									strong Public Key
-									| (encrypted)
-							a.btn.decrypt(type="button", ng-click="sendKey(key)", ng-title="{{'LAVAMAIL.SETTINGS.SECURITY.SEND_PUBLIC_KEY' | translate}}")
+							a.btn.decrypt(type="button", ng-click="$event.stopPropagation(); sendKey(key)", ng-title="{{'LAVAMAIL.SETTINGS.SECURITY.SEND_PUBLIC_KEY' | translate}}")
 								span.icon-public-key-send
 								span share
-							a.btn.download(type="button", ng-click="exportPublicKey(key)". title="{{'LAVAMAIL.SETTINGS.SECURITY.EXPORT_PUBLIC_KEY' | translate}}")
+							a.btn.download(type="button", ng-click="$event.stopPropagation(); exportPublicKey(key)", title="{{'LAVAMAIL.SETTINGS.SECURITY.EXPORT_PUBLIC_KEY' | translate}}")
 								span.icon-key-pair-download2
 								span download
 						div.key-details(collapse="key.isPublicCollapsed()")
@@ -67,62 +67,7 @@
 									br
 									a Learn more about your Encryption Keys.
 							div.intro
-								.key-contents -----BEGIN PGP PUBLIC KEY BLOCK-----
-									| Version: OpenPGP.js v1.0.1
-									| Comment: http://openpgpjs.org
-
-									| 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
-									| bCZouA==
-									| =RtuA
-									| -----END PGP PUBLIC KEY BLOCK-----
+								.key-contents(ng-bind-html="key.publicArmor | brify")
 					.key.public
 						.table-row(ng-click="key.switchPrivateCollapse(key)")
 							a.btn.caret-btn
@@ -131,8 +76,8 @@
 							div
 								span.key-id
 									strong Private Key
-									| (encrypted)
-							a.btn.download(type="button", ng-click="exportPublicKey(key)". title="{{'LAVAMAIL.SETTINGS.SECURITY.EXPORT_PUBLIC_KEY' | translate}}")
+									span (encrypted)
+							a.btn.download(type="button", ng-click="$event.stopPropagation(); exportPrivateKey(key)", title="{{'LAVAMAIL.SETTINGS.SECURITY.EXPORT_PUBLIC_KEY' | translate}}")
 								span.icon-key-pair-download2
 								span download
 						div.key-details(collapse="key.isPrivateCollapsed()")
@@ -142,62 +87,7 @@
 									br
 									a Learn more about encryption keys
 							div.intro
-								.key-contents -----BEGIN PGP PUBLIC KEY BLOCK-----
-									| Version: OpenPGP.js v1.0.1
-									| Comment: http://openpgpjs.org
-
-									| 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
-									| bCZouA==
-									| =RtuA
-									| -----END PGP PUBLIC KEY BLOCK-----
+								.key-contents(ng-bind-html="key.privateArmor | brify")
 
 
 
