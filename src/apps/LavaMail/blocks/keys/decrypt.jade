@@ -9,4 +9,7 @@ div
 							button.btn.btn-default(ng-click="hidePopup()")
 								span.icon-close
 		.row.lava-modal-content
-			div.col-xs-12.col-xs-offset-6
+			div.col-xs-20.col-xs-offset-2
+				hr.spacer
+				label {{'LAVAMAIL.SETTINGS.SECURITY.LB_PASSPHRASE' | translate}}
+				input.form-control(type='password', ng-model="key.decryptPassword")
