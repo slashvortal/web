@@ -149,6 +149,8 @@ module.exports = function ($q, $rootScope, $filter, $translate, co, crypto, cons
 		const [keyring] = crypto.createKeyring(false);
 
 		let publicKey = keyring.publicKeys.findByFingerprint(fingerprint);
+		if (!publicKey)
+			return '';
 
 		return publicKey.armor();
 	};
@@ -156,9 +158,11 @@ module.exports = function ($q, $rootScope, $filter, $translate, co, crypto, cons
 	this.exportPrivateKeyByFingerprint = (fingerprint) => {
 		const [keyring] = crypto.createKeyring(false);
 
-		let publicKey = keyring.privateKeys.findByFingerprint(fingerprint);
+		let privateKey = keyring.privateKeys.findByFingerprint(fingerprint);
+		if (!privateKey)
+			return '';
 
-		return publicKey.armor();
+		return privateKey.armor();
 	};
 
 	this.getExportFilename = (hash, userName) => {
