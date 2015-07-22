@@ -22,7 +22,7 @@ div.pane-status(ng-if="selectedTid === null")
 					button.btn.btn-default(ng-click="restoreFromSpam(selectedTid)", tooltip="{{'LAVAMAIL.INBOX.NOT_SPAM' | translate}}", tooltip-placement="bottom", tooltip-append-to-body="true")
 						span.icon-put-back
 				li(ng-show="selectedTid && labelName == 'Trash'")
-					button.btn.btn-default(ng-click="restoreFromTrash(selectedTid)", tooltip="{{'LAVAMAIL.INBOX.PUT_BACK' | translate}}", tooltip-placement="bottom", tooltip-append-to-body="true")
+					button.btn.btn-default(ng-show="labelName != 'Drafts'", ng-click="restoreFromTrash(selectedTid)", tooltip="{{'LAVAMAIL.INBOX.PUT_BACK' | translate}}", tooltip-placement="bottom", tooltip-append-to-body="true")
 						span.icon-put-back
 	include ../misc/_notifications
 
