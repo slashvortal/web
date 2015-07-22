@@ -153,6 +153,14 @@ module.exports = function ($q, $rootScope, $filter, $translate, co, crypto, cons
 		return publicKey.armor();
 	};
 
+	this.exportPrivateKeyByFingerprint = (fingerprint) => {
+		const [keyring] = crypto.createKeyring(false);
+
+		let publicKey = keyring.privateKeys.findByFingerprint(fingerprint);
+
+		return publicKey.armor();
+	};
+
 	this.getExportFilename = (hash, userName) => {
 		let hashPostfix = hash.substr(0, 8);
 		return `${userName}-${hashPostfix}.json`;

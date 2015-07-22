@@ -147,6 +147,19 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 				});
 			};
 		},
+		'decryptKey': function () {
+			this.url =  '/key/:fingerprint/decrypt';
+
+			// @ngInject
+			this.onEnter = (router) => {
+				router.createPopup({
+					templateUrl: 'LavaMail/keys/decrypt',
+					controller: 'CtrlKeyDecrypt',
+					backdrop: 'static',
+					size: 'sm'
+				});
+			};
+		},
 		'importContacts': function () {
 			this.url =  '/import/contacts/';
 

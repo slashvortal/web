@@ -60,6 +60,10 @@ module.exports = ($scope, $timeout, $translate, $state,
 		saver.saveAs(cryptoKeys.exportPublicKeyByFingerprint(key.fingerprint), key.email + '.asc', 'text/plain;charset=utf-8');
 	};
 
+	$scope.exportPrivateKey = (key) => {
+		saver.saveAs(cryptoKeys.exportPrivateKeyByFingerprint(key.fingerprint), key.email + '.prv', 'text/plain;charset=utf-8');
+	};
+
 	$scope.sendKey = (key) => {
 		router.showPopup('compose', {publicKey: key.fingerprint});
 	};
