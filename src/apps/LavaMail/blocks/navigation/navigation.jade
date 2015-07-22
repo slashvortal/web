@@ -15,7 +15,7 @@ div.ng-cloak
 					span.action {{labelTranslations[label.name.toUpperCase()]}}
 					span.badge {{label.threadsUnread | unread}}
 					span.combo(ng-show="isActive('g')") ({{getMultiComboPrettified('g', label.name)}})
-			//li
+			//- li
 				a
 					span.icon-label
 					span.action Labels
@@ -55,4 +55,5 @@ div.ng-cloak
 					|&nbsp;{{servedBy.text}}
 				button(ng-click="logout()", tooltip-placement="right", tooltip = "{{'LAVAMAIL.NAV.LB_LOGOUT' | translate}}")
 					span.icon-power
-					span.action {{'LAVAMAIL.NAV.LB_LOGOUT' | translate}} ({{name}})
+					span.action {{'LAVAMAIL.NAV.LB_LOGOUT' | translate}}
+						span.username ({{name}})
