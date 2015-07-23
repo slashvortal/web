@@ -17,6 +17,9 @@
     },
     "ro_RO":{
     "name": "Română"
+    },
+    "pt_BR":{
+    "name":"Portuguese (Brazil)"
     }
   }
 }
