@@ -55,12 +55,6 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 			controller:'CtrlVerify'
 		})
 
-		.state('plan', {
-			url: '/plan',
-			templateUrl: 'LavaLogin/login/plan',
-			controller:'CtrlSelectPlan'
-		})
-
 		.state('details', {
 			url: '/details',
 			templateUrl: 'LavaLogin/login/details',
@@ -94,7 +88,7 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 		.state('backupKeys', {
 			url: '/keys/backup',
 			templateUrl: 'LavaLogin/login/backupKey',
-			controller: 'CtrlBackup'
+			controller: 'CtrlBackupKey'
 		})
 
 		.state('importKeys', {

@@ -33,7 +33,7 @@ module.exports = function ($rootScope, $templateCache, $compile, co, utils, cons
 	});
 
 	this.buildForwardedTemplate = (body, signature, forwardEmails) => co(function *(){
-		return yield utils.fetchAndCompile('LavaMail/inbox/forwardedEmail', {
+		return yield utils.fetchAndCompile('LavaMail/inboxEmails/forwardedEmail', {
 			body,
 			signature,
 			forwardEmails
@@ -41,7 +41,7 @@ module.exports = function ($rootScope, $templateCache, $compile, co, utils, cons
 	});
 
 	this.buildRepliedTemplate = (body, signature, replies) => co(function *(){
-		return yield utils.fetchAndCompile('LavaMail/inbox/repliedEmail', {
+		return yield utils.fetchAndCompile('LavaMail/inboxEmails/repliedEmail', {
 			body,
 			signature,
 			replies
@@ -49,7 +49,7 @@ module.exports = function ($rootScope, $templateCache, $compile, co, utils, cons
 	});
 
 	this.buildDirectTemplate = (body, signature) => co(function *(){
-		return yield utils.fetchAndCompile('LavaMail/inbox/directEmail', {
+		return yield utils.fetchAndCompile('LavaMail/inboxEmails/directEmail', {
 			body,
 			signature
 		});

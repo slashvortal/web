@@ -107,7 +107,7 @@ function AngularApplication ({name, dependencies, productionOnlyDependencies, is
 	};
 
 	this.registerAngularController = function (controllerName, controller) {
-		let declarativeControllerName = capitalize(controllerName);
+		let declarativeControllerName = 'Ctrl' + capitalize(controllerName.replace('.ctrl', '').replace('_', ''));
 		console.debug(`module ${appName}: declare a controller...`, declarativeControllerName);
 
 		applicationModule.controller(declarativeControllerName, controller);
@@ -129,7 +129,7 @@ function AngularApplication ({name, dependencies, productionOnlyDependencies, is
 
 				let entries = blocks[blockName];
 				for (let entryName of Object.keys(entries)) {
-					if (entryName.startsWith('ctrl')) {
+					if (entryName.endsWith('.ctrl')) {
 						self.registerAngularController(entryName, entries[entryName]);
 						continue;
 					}
