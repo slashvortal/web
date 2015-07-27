@@ -6,6 +6,7 @@
 	
 	.key-pair{
 		border: @border-site-wide-light;
+		border-radius: @border-radius-base;
 		padding: 0 1.1rem 1.1rem;
 		.pos-rel();
 		[class^="icon-"], [class*=" icon-"] {
@@ -16,6 +17,7 @@
 			padding: .8rem 0;
 			width: 100%;
 			table-layout: fixed;
+			cursor: pointer;
 			> * {
 				vertical-align: middle;
 			}
@@ -116,7 +118,8 @@
 		}
 
 		.key{
-			box-shadow: 0 0 5px rgba(0,0,0, 0.4);
+			box-shadow: 0 0 .4rem .1rem rgba(0, 0, 0, 0.2);
+			border-radius: @border-radius-base;
 			&:not(:last-child){
 				margin-bottom: 1.1rem;
 			}
