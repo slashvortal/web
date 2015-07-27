@@ -53,7 +53,7 @@
 			div
 				h4(ng-show="details.privateEmails.length || isEditMode") {{'LAVAMAIL.CONTACTS.TITLE_PRIVATE_EMAIL' | translate}}
 				ul.list-group(ng-repeat="currentEmail in details.privateEmails", ng-controller="CtrlContactProfileEmail", ng-init="emails = 'privateEmails'")
-					include ./_contactsProfileEmail
+					include ./_contactProfileEmail
 				ul.list-group(ng-show="isEditMode")
 					li.list-group-item.pack
 						button.btn.btn-default.btn-block.btn-icon(type="button", ng-click="addNewPrivateEmail()")
@@ -62,7 +62,7 @@
 			div
 				h4(ng-show="details.businessEmails.length || isEditMode") {{'LAVAMAIL.CONTACTS.TITLE_BUSINESS_EMAIL' | translate}}
 				ul.list-group(ng-repeat="currentEmail in details.businessEmails", ng-controller="CtrlContactProfileEmail", ng-init="emails = 'businessEmails'")
-					include ./_contactsProfileEmail
+					include ./_contactProfileEmail
 				ul.list-group(ng-show="isEditMode")
 					li.list-group-item.pack
 						button.btn.btn-default.btn-block.btn-icon(type="button", ng-click="addNewBusinessEmail()")

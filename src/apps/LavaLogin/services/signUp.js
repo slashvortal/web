@@ -2,7 +2,7 @@ module.exports = function (LavaboomAPI, co, user, consts, $http) {
 	const self = this;
 
 	this.reserve = null;
-	this.plan = null;
+	this.plan = 'beta';
 	this.tokenSignup = null;
 	this.details = null;
 	this.password = null;

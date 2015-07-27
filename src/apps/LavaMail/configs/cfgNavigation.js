@@ -36,7 +36,7 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 					templateUrl: 'LavaMail/inbox/inbox'
 				},
 				'threads@main.inbox': {
-					templateUrl: 'LavaMail/inbox/threads',
+					templateUrl: 'LavaMail/inbox/threadList',
 					controller: 'CtrlThreadList'
 				}
 			}
@@ -47,7 +47,7 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 
 			views: {
 				'emails@main.inbox': {
-					templateUrl: 'LavaMail/inbox/emails',
+					templateUrl: 'LavaMail/inbox/emailList',
 					controller: 'CtrlEmailList'
 				}
 			}
@@ -64,7 +64,7 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 
 		'main.contacts.profile': {
 			url: '/profile/:contactId?email',
-			templateUrl: 'LavaMail/contacts/contactsProfile',
+			templateUrl: 'LavaMail/contacts/contactProfile',
 			controller: 'CtrlContactProfile'
 		},
 
@@ -79,27 +79,32 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 
 		'main.settings.general': {
 			url: '/general',
-			templateUrl: 'LavaMail/settings/settingsGeneral'
+			templateUrl: 'LavaMail/settings/settingsGeneral',
+			controller: 'CtrlSettingsGeneral'
 		},
 
 		'main.settings.profile': {
 			url: '/profile',
-			templateUrl: 'LavaMail/settings/settingsProfile'
+			templateUrl: 'LavaMail/settings/settingsProfile',
+			controller: 'CtrlSettingsProfile'
 		},
 
 		'main.settings.security': {
 			url: '/security',
-			templateUrl: 'LavaMail/settings/settingsSecurity'
+			templateUrl: 'LavaMail/settings/settingsSecurity',
+			controller: 'CtrlSettingsSecurity'
 		},
 
 		'main.settings.keys': {
 			url: '/keys',
-			templateUrl: 'LavaMail/settings/settingsKeys'
+			templateUrl: 'LavaMail/settings/settingsKeys',
+			controller: 'CtrlSettingsKeys'
 		},
 
 		'main.settings.plan': {
 			url: '/plan',
-			templateUrl: 'LavaMail/settings/settingsPlan'
+			templateUrl: 'LavaMail/settings/settingsPlan',
+			controller: 'CtrlSettingsPlan'
 		}
 	};
 
@@ -153,7 +158,7 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 			// @ngInject
 			this.onEnter = (router) => {
 				router.createPopup({
-					templateUrl: 'LavaMail/keys/decrypt',
+					templateUrl: 'LavaMail/settingsDialogs/keyDecrypt',
 					controller: 'CtrlKeyDecrypt',
 					backdrop: 'static',
 					size: 'sm'
@@ -166,7 +171,7 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 			// @ngInject
 			this.onEnter = (router) => {
 				router.createPopup({
-					templateUrl: 'LavaMail/contacts/import',
+					templateUrl: 'LavaMail/contacts/importContacts',
 					controller: 'CtrlImportContacts',
 					backdrop: 'static',
 					size: 'sm'

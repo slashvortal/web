@@ -3,11 +3,14 @@ form.ng-cloak(name="__form", ng-class="{'errors': currentErrorMessage}", ng-subm
 
 	div.alert.alert-danger(ng-show="currentErrorMessage", ng-bind="currentErrorMessage")
 
+	p.text-center
+		a(ui-sref="verifyInvite") {{'LAVALOGIN.SECURE_USERNAME.LNK_INVITE_QUESTION' | translate}}
+
 	div.form-group
 		div.input-group.suffix.clearfix
 			input.form-control.input-lg(type='text', name="username", ng-model='form.username', placeholder="{{'GLOBAL.USERNAME' | translate}}",
 				focus="true", required, minlength="2", pattern="^[a-zA-Z0-9\\.]+$")
-			span.input-group-addon @lavaboom.com
+			span.input-group-addon @{{rootDomain}}
 			span.alert.alert-danger(ng-show="__form.$submitted", ng-messages="__form.username.$error", ng-messages-include="LavaLogin/misc/validationMessages")
 				span(ng-message="pattern") {{'VALIDATION.LB_USERNAME_PATTERN' | translate}}
 

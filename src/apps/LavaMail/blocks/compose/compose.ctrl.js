@@ -1,6 +1,7 @@
-module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
-							   utils, consts, co, router, composeHelpers, textAngularHelpers, crypto,
-							   user, contacts, inbox, Manifest, Contact, hotkey, ContactEmail, Email, Attachment) => {
+module.exports = ($scope, $stateParams, $translate,
+				  textAngularHelpers, composeTemplatesExtension, composeDraftsExtension, composeContactsExtension, utils, consts, co, router,
+				  crypto, user, contacts, inbox, Manifest, hotkey, ContactEmail, Email, Attachment) => {
+
 	$scope.toolbar = [
 		['pre'],
 		['h1', 'h2', 'h3'],
@@ -23,6 +24,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		subject: '',
 		body: ''
 	};
+	$scope.attachments = [];
 
 	$scope.isSent = false;
 	$scope.isSending = false;
@@ -31,14 +33,24 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	$scope.isXCC = false;
 	$scope.isCC = false;
 	$scope.isBCC = false;
-
+	$scope.isToolbarShown = false;
 	$scope.isDraftWarning = false;
 	$scope.isSkipWarning = user.settings.isSkipComposeScreenWarning;
-	$scope.attachments = [];
 
-	$scope.isToolbarShown = false;
+	$scope.isValid = () => $scope.__form.$valid && $scope.form && $scope.form.selected.to.length > 0;
+	$scope.clearTo = () => $scope.form.selected.to = [];
+	$scope.clearCC = () => $scope.form.selected.cc = [];
+	$scope.clearBCC = () => $scope.form.selected.bcc = [];
+	$scope.toggleCC = () => $scope.isCC = !$scope.isCC;
+	$scope.toggleBCC = () => $scope.isBCC = !$scope.isBCC;
+	$scope.toggleToolbar = () => $scope.isToolbarShown = !$scope.isToolbarShown;
+	$scope.toggleIsSkipWarning = () => $scope.isSkipWarning = !$scope.isSkipWarning;
 
-	let hiddenContacts = {};
+	$scope.tagClicked = composeContactsExtension.tagClick;
+	$scope.tagTransform = composeContactsExtension.tagTransform;
+	$scope.personFilter = composeContactsExtension.createPersonFilter($scope.form);
+	$scope.formatPaste = (html) => textAngularHelpers.formatPaste(html);
+
 	let draftId = $stateParams.draftId;
 	let isExistingDraft = !!draftId;
 	let replyThreadId = $stateParams.replyThreadId;
@@ -48,10 +60,16 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	let forwardThreadId = $stateParams.forwardThreadId;
 	let toEmail = $stateParams.to;
 	let publicKey = null;
-	let autoSaveInterval = null;
-
 	let manifest = null;
-	let newHiddenContact = null;
+	let subject = '';
+	let body = '<br/>';
+
+	const isChanged = () =>
+		$scope.form.selected.to.length > 0 ||
+		$scope.form.selected.cc.length > 0 ||
+		$scope.form.selected.bcc.length > 0 ||
+		$scope.form.subject.trim() != subject ||
+		$scope.form.body.trim() != body;
 
 	const translations = {
 		LB_ATTACHMENT_STATUS_READING: '',
@@ -68,32 +86,6 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	};
 	$translate.bindAsObject(translations, 'LAVAMAIL.COMPOSE');
 
-	let subject = '';
-	let body = '<br/>';
-
-	function isChanged() {
-		return $scope.form.selected.to.length > 0 ||
-		$scope.form.selected.cc.length > 0 ||
-		$scope.form.selected.bcc.length > 0 ||
-		$scope.form.subject.trim() != subject ||
-		$scope.form.body.trim() != body;
-	}
-
-	const saveAsDraft = () => co(function *(){
-		let meta = {
-			publicKey: publicKey,
-			to: $scope.form.selected.to ? $scope.form.selected.to.map(e => e.email) : [],
-			cc: $scope.form.selected.cc ? $scope.form.selected.cc.map(e => e.email) : [],
-			bcc: $scope.form.selected.bcc ? $scope.form.selected.bcc.map(e => e.email) : [],
-			subject: $scope.form.subject
-		};
-
-		if (draftId) {
-			yield inbox.updateDraft(draftId, meta, $scope.form.body);
-		} else {
-			draftId = yield inbox.createDraft(meta, $scope.form.body);
-		}
-	});
 
 	const processAttachment = (attachmentStatus) => co(function *() {
 		attachmentStatus.status = translations.LB_ATTACHMENT_STATUS_READING;
@@ -119,7 +111,6 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	});
 
 	co(function* () {
-		console.log('compose initialize');
 		let params = null;
 		let draft = null;
 		if (draftId) {
@@ -193,27 +184,27 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 				const signature = user.settings.isSignatureEnabled && user.settings.signatureHtml ? user.settings.signatureHtml : '';
 				if (forwardEmailId) {
 					let emails = [yield inbox.getEmailById(forwardEmailId)];
-					body = yield composeHelpers.buildForwardedTemplate(body, '', emails);
+					body = yield composeTemplatesExtension.buildForwardedTemplate(body, '', emails);
 					subject = 'Fwd: ' + Email.getSubjectWithoutRe(emails[0].subject);
 				}
 				else
 				if (forwardThreadId) {
 					let emails = yield inbox.getEmailsByThreadId(forwardThreadId);
-					body = yield composeHelpers.buildForwardedTemplate(body, '', emails);
+					body = yield composeTemplatesExtension.buildForwardedTemplate(body, '', emails);
 					subject = 'Fwd: ' + Email.getSubjectWithoutRe(emails[0].subject);
 				}
 				else
 				if (replyEmailId) {
 					let email = yield inbox.getEmailById(replyEmailId);
 
-					body = yield composeHelpers.buildRepliedTemplate(body, signature, [{
+					body = yield composeTemplatesExtension.buildRepliedTemplate(body, signature, [{
 						date: email.date,
 						name: email.from[0].name,
 						address: email.from[0].address,
 						body: email.body.data
 					}]);
 				} else
-					body = yield composeHelpers.buildDirectTemplate(body, signature);
+					body = yield composeTemplatesExtension.buildDirectTemplate(body, signature);
 
 				if (replyThreadId && replyEmailId) {
 					let thread = yield inbox.getThreadById(replyThreadId);
@@ -251,11 +242,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 					};
 				}
 
-				autoSaveInterval = $interval(() => {
-					if (isExistingDraft || isChanged())
-						saveAsDraft();
-				}, consts.COMPOSE_AUTO_SAVE_INTERVAL);
-
+				composeDraftsExtension.setupAutoSave(isExistingDraft, isChanged, draftId, publicKey, $scope.form);
 				console.log('$scope.form', $scope.form);
 			});
 		});
@@ -331,13 +318,6 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		user.update({isSkipComposeScreenWarning: $scope.isSkipWarning});
 	});
 
-	$scope.toggleIsSkipWarning = (event) => {
-		$scope.isSkipWarning = !$scope.isSkipWarning;
-	};
-
-	$scope.isValid = () => $scope.__form.$valid &&
-		$scope.form && $scope.form.selected.to.length > 0;
-
 	$scope.send = () => co(function *() {
 		$scope.isSending = true;
 		try {
@@ -352,11 +332,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 
 			yield $scope.attachments.map(a => a.processingPromise);
 
-			let to = $scope.form.selected.to.map(e => e.email),
-				cc = $scope.form.selected.cc.map(e => e.email),
-				bcc = $scope.form.selected.bcc.map(e => e.email);
-
-			let keys = yield composeHelpers.getKeys($scope.form.selected.to, $scope.form.selected.cc, $scope.form.selected.bcc);
+			let [to, cc, bcc] = composeContactsExtension.getAddressesFromForm($scope.form);
+			let keys = yield composeContactsExtension.getKeys($scope.form.selected.to, $scope.form.selected.cc, $scope.form.selected.bcc);
 			const isSecured = Email.isSecuredKeys(keys);
 
 			yield $scope.attachments.map(attachmentStatus => $scope.uploadAttachment(attachmentStatus, keys));
@@ -377,7 +354,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 					attachmentStatus.attachment.getBodyAsBinaryString(), attachmentStatus.attachment.name, attachmentStatus.attachment.type);
 
 			try {
-				let body = composeHelpers.cleanupOutboundEmail($scope.form.body);
+				let body = composeTemplatesExtension.cleanupOutboundEmail($scope.form.body);
 
 				console.log('$scope.attachments', $scope.attachments);
 
@@ -414,13 +391,7 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 
 			yield inbox.confirmSend();
 
-			yield manifest.getDestinationEmails()
-				.filter(email => !contacts.getContactByEmail(email))
-				.map(email => {
-					let contact = new Contact({name: '$hidden'});
-					contact.hiddenEmail = hiddenContacts[email];
-					return contacts.createContact(contact);
-				});
+			yield composeContactsExtension.createHiddenContacts(manifest.getDestinationEmails());
 
 			manifest = null;
 
@@ -436,16 +407,15 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	$scope.close = () => {
 		if (!isExistingDraft && isChanged()) {
 			$scope.isDraftWarning = true;
-		}
-		else {
+		} else {
 			if (isExistingDraft && isChanged())
-				saveAsDraft();
+				composeDraftsExtension.saveAsDraft(draftId, publicKey, $scope.form);
 			router.hidePopup();
 		}
 	};
 
 	$scope.saveDraft = () => co(function *(){
-		yield saveAsDraft();
+		yield composeDraftsExtension.saveAsDraft(draftId, publicKey, $scope.form);
 
 		router.hidePopup();
 	});
@@ -481,92 +451,6 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 		$scope.attachments.push(attachmentStatus);
 	};
 
-	$scope.clearTo = () => $scope.form.selected.to = [];
-	$scope.clearCC = () => $scope.form.selected.cc = [];
-	$scope.clearBCC = () => $scope.form.selected.bcc = [];
-
-	$scope.toggleCC = () => $scope.isCC = !$scope.isCC;
-	$scope.toggleBCC = () => $scope.isBCC = !$scope.isBCC;
-
-	$scope.toggleToolbar = () => $scope.isToolbarShown = !$scope.isToolbarShown;
-
-	$scope.tagClicked = (select, item, model) => {
-		const index = model.findIndex(c => c.email == item.email);
-		if (index > -1) {
-			const tag = item.getTag();
-			if (tag) {
-				model.splice(index, 1);
-				select.search = item.getTag();
-			}
-		}
-	};
-
-	$scope.tagTransform = newTag => {
-		if (!newTag)
-			return null;
-
-		const match = newTag.match(/<([^>]*)>/);
-		const emailInside = match ? match[1] : null;
-		const emailTemplate = emailInside ? emailInside : newTag;
-
-		let p = emailTemplate.split('@');
-
-		let name = '', email = '';
-
-		if (p.length > 1)
-			[name, email] = [p[0].trim(), `${p[0].trim()}@${p[1].trim()}`];
-		else {
-			if (!user.settings.isUnknownContactsAutoComplete)
-				return null;
-
-			[name, email] = [emailTemplate.trim(), `${emailTemplate.trim()}@${consts.ROOT_DOMAIN}`];
-		}
-
-		if (newHiddenContact) {
-			if (newHiddenContact.email == email)
-				return newHiddenContact;
-
-			newHiddenContact.cancelKeyLoading();
-		}
-
-		if (hiddenContacts[email])
-			return hiddenContacts[email];
-
-		if (contacts.getContactByEmail(email))
-			return null;
-
-		newHiddenContact = new ContactEmail(null, {
-			isTag: true,
-			tag: newTag,
-			name,
-			email,
-			isNew: true
-		}, 'hidden');
-
-		newHiddenContact.loadKey();
-
-		hiddenContacts[newHiddenContact.email] = newHiddenContact;
-		return newHiddenContact;
-	};
-
-	$scope.personFilter = (text) =>
-		(person) => {
-			text = text.toLowerCase();
-
-			return person &&
-				(!$scope.form || !$scope.form.selected.to.some(e => e.email == person.email)) && (
-					person.getDisplayName().toLowerCase().includes(text) ||
-					person.name.toLowerCase().includes(text) ||
-					person.email.toLowerCase().includes(text)
-				);
-		};
-
-	$scope.formatPaste = (html) => textAngularHelpers.formatPaste(html);
-
-	$scope.$on('$destroy',  () => {
-		$interval.cancel(autoSaveInterval);
-	});
-
 	hotkey.registerCustomHotkeys($scope, [
 		{
 			combo: ['ctrl+enter', 'command+enter'],
@@ -579,4 +463,8 @@ module.exports = ($rootScope, $scope, $stateParams, $translate, $interval,
 	], {scope: 'ctrlCompose'});
 
 	textAngularHelpers.ctrlEnterCallback = $scope.send;
+
+	$scope.$on('$destroy',  () => {
+		composeDraftsExtension.cancelAutoSave();
+	});
 };

@@ -68,8 +68,8 @@ module.exports = ($scope, $timeout, $translate,
 				let backup = utils.def(() => cryptoKeys.verifyAndReadBackup($scope.settings.keyring), null);
 				if (backup && backup.prv.length > 0) {
 					const confirmed = yield co.def(dialogs.create(
-						'LavaMail/misc/lsOff',
-						'CtrlLsOff'
+						'LavaMail/settingsDialogs/lavaSyncOff',
+						'CtrlLavaSyncOff'
 					).result, 'cancelled');
 
 					if (confirmed == 'cancelled') {

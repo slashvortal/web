@@ -26,7 +26,7 @@ div.pane-status(ng-if="selectedTid === null")
 						span.icon-put-back
 	include ../misc/_notifications
 
-.global-mail-actions(ng-hide="isLoading")
+.global-mail-actions(ng-hide="isLoading || labelName == 'Drafts'")
 	div.btn-group
 		button.btn.btn-default(ng-if="selectedTid && !threads[selectedTid].isToYourself", ng-click="showPopup('compose', {replyThreadId: selectedTid, replyEmailId: emails[emails.length - 1].id})")
 			span.icon-reply
