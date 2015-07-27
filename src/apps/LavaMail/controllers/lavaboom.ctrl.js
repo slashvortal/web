@@ -131,6 +131,17 @@ module.exports = ($rootScope, $timeout, $scope, $state, $translate, $sanitize,
 				}
 			},
 			{
+				combo: ['d'],
+				name: 'Drafts',
+				require: 'g',
+				requireDescription: 'LAVAMAIL.HOTKEY.GOTO',
+				description: 'LAVAMAIL.HOTKEY.GOTO_DRAFTS',
+				callback: (event, key) => {
+					event.preventDefault();
+					$state.go('main.inbox.label', {labelName: 'drafts'});
+				}
+			},
+			{
 				combo: ['s'],
 				name: 'Sent',
 				require: 'g',
