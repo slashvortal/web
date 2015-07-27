@@ -1,4 +1,5 @@
-module.exports = ($scope, $state, co, signUp) => {
+module.exports = ($scope, $state, consts, co, signUp) => {
+	$scope.rootDomain = consts.ROOT_DOMAIN;
 	$scope.form = {
 		username: '',
 		email: ''
