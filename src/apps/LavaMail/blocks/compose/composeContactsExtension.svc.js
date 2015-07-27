@@ -1,24 +1,24 @@
-module.exports = function ($rootScope, $templateCache, $compile, co, utils, consts, contacts, crypto, user, Contact, ContactEmail) {
+module.exports = function (co, consts, contacts, user, Contact, ContactEmail) {
 	const self = this;
 	let newHiddenContact = null;
 	let hiddenContacts = {};
 
-	const transformNodes = (dom, level = 0) => {
-		for(let node of dom.childNodes) {
-			if (node.getAttribute) {
-				let classAttr = node.getAttribute('class');
-				if (classAttr && classAttr.length > 1) {
-					let classes = classAttr.match(/\S+/g).filter(c => !c.startsWith('ng-'));
-					node.setAttribute('class', classes.join(' '));
-				}
-			}
+	self.getAddressesFromForm = (form) => {
+		let to = form.selected.to ? form.selected.to.map(e => e.email) : [],
+			cc = form.selected.cc ? form.selected.cc.map(e => e.email) : [],
+			bcc = form.selected.bcc ? form.selected.bcc.map(e => e.email) : [];
 
-			if (node.childNodes && node.childNodes.length > 0)
-				transformNodes(node, level + 1);
-		}
+		return [to, cc, bcc];
 	};
 
-	this.createHiddenContacts = (destinationEmails) => {
+	self.getKeys = (to, cc, bcc) => co(function *(){
+		return yield ([...to, ...cc, ...bcc].reduce((a, e) => {
+			a[e.email] = co.transform(co.def(e.loadKey(), null), e => e ? e.armor() : null);
+			return a;
+		}, {}));
+	});
+
+	self.createHiddenContacts = (destinationEmails) => {
 		return destinationEmails
 			.filter(email => !contacts.getContactByEmail(email))
 			.map(email => {
@@ -28,7 +28,7 @@ module.exports = function ($rootScope, $templateCache, $compile, co, utils, cons
 			});
 	};
 
-	this.tagClick = (select, item, model) => {
+	self.tagClick = (select, item, model) => {
 		const index = model.findIndex(c => c.email == item.email);
 		if (index > -1) {
 			const tag = item.getTag();
@@ -39,7 +39,7 @@ module.exports = function ($rootScope, $templateCache, $compile, co, utils, cons
 		}
 	};
 
-	this.tagTransform = newTag => {
+	self.tagTransform = newTag => {
 		if (!newTag)
 			return null;
 
@@ -87,7 +87,7 @@ module.exports = function ($rootScope, $templateCache, $compile, co, utils, cons
 		return newHiddenContact;
 	};
 
-	this.createPersonFilter = (form) => {
+	self.createPersonFilter = (form) => {
 		return (text) =>
 			(person) => {
 				text = text.toLowerCase();
@@ -105,43 +105,4 @@ module.exports = function ($rootScope, $templateCache, $compile, co, utils, cons
 					);
 			};
 	};
-
-	this.cleanupOutboundEmail = (body) => {
-		let dom = utils.getDOM(body);
-		transformNodes(dom);
-
-		console.log('cleanupOutboundEmail: ', body, 'transformed to: ', dom.innerHTML);
-
-		return dom.innerHTML;
-	};
-
-	this.getKeys = (to, cc, bcc) => co(function *(){
-		return yield ([...to, ...cc, ...bcc].reduce((a, e) => {
-			a[e.email] = co.transform(co.def(e.loadKey(), null), e => e ? e.armor() : null);
-			return a;
-		}, {}));
-	});
-
-	this.buildForwardedTemplate = (body, signature, forwardEmails) => co(function *(){
-		return yield utils.fetchAndCompile('LavaMail/inboxEmails/forwardedEmail', {
-			body,
-			signature,
-			forwardEmails
-		});
-	});
-
-	this.buildRepliedTemplate = (body, signature, replies) => co(function *(){
-		return yield utils.fetchAndCompile('LavaMail/inboxEmails/repliedEmail', {
-			body,
-			signature,
-			replies
-		});
-	});
-
-	this.buildDirectTemplate = (body, signature) => co(function *(){
-		return yield utils.fetchAndCompile('LavaMail/inboxEmails/directEmail', {
-			body,
-			signature
-		});
-	});
 };
