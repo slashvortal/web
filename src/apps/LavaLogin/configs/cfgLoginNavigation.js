@@ -23,38 +23,38 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 
 		.state('secureUsername', {
 			url: '/secure',
-			templateUrl: 'LavaLogin/login/classic-secure-username',
+			templateUrl: 'LavaLogin/login/secureUsername',
 			controller:'CtrlSecureUsername'
 		})
 
 		.state('reservedUsername', {
 			url: '/reserved',
-			templateUrl: 'LavaLogin/login/classic-reserved-username',
+			templateUrl: 'LavaLogin/login/reservedUsername',
 			controller:'CtrlReservedUsername'
 		})
 
 		.state('verify', {
 			url: '/verify/{userName}/{inviteCode}',
-			templateUrl: 'LavaLogin/login/classic-verify',
-			controller: 'CtrlVerify'
+			templateUrl: 'LavaLogin/login/verifyInvite',
+			controller: 'CtrlVerifyInvite'
 		})
 
 		.state('details', {
 			url: '/details',
-			templateUrl: 'LavaLogin/login/classic-user-details',
-			controller:'CtrlDetails'
+			templateUrl: 'LavaLogin/login/userDetails',
+			controller:'CtrlUserDetails'
 		})
 
 		.state('choosePasswordIntro', {
 			url: '/password/intro',
-			templateUrl: 'LavaLogin/login/classic-choose-password-intro',
-			controller:'CtrlPassword'
+			templateUrl: 'LavaLogin/login/choosePasswordIntro',
+			controller:'CtrlChoosePassword'
 		})
 
 		.state('choosePassword', {
 			url: '/password',
-			templateUrl: 'LavaLogin/login/classic-choose-password',
-			controller:'CtrlPassword'
+			templateUrl: 'LavaLogin/login/choosePassword',
+			controller:'CtrlChoosePassword'
 		})
 
 		.state('generateKeys', {
