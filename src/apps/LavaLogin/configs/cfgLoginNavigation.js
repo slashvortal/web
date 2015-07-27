@@ -15,20 +15,10 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 			templateUrl: 'LavaLogin/login/loginOrSignup'
 		})
 
-		.state('decrypting', {
-			url: '/decrypting',
-			templateUrl: 'LavaLogin/login/decrypting'
-		})
-
 		.state('auth', {
 			url: '/auth',
 			templateUrl: 'LavaLogin/login/auth',
 			controller:'CtrlAuth'
-		})
-
-		.state('invite', {
-			url: '/invite',
-			templateUrl: 'LavaLogin/login/invite'
 		})
 
 		.state('secureUsername', {
@@ -43,40 +33,28 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 			controller:'CtrlReservedUsername'
 		})
 
-		.state('verifyInvite', {
-			url: '/verify',
-			templateUrl: 'LavaLogin/login/verifyInvite',
-			controller:'CtrlVerify'
-		})
-
-		.state('verifyInviteConfigured', {
+		.state('verify', {
 			url: '/verify/{userName}/{inviteCode}',
 			templateUrl: 'LavaLogin/login/verifyInvite',
-			controller:'CtrlVerify'
-		})
-
-		.state('plan', {
-			url: '/plan',
-			templateUrl: 'LavaLogin/login/plan',
-			controller:'CtrlSelectPlan'
+			controller: 'CtrlVerifyInvite'
 		})
 
 		.state('details', {
 			url: '/details',
-			templateUrl: 'LavaLogin/login/details',
-			controller:'CtrlDetails'
-		})
-
-		.state('choosePassword', {
-			url: '/password',
-			templateUrl: 'LavaLogin/login/choosePassword',
-			controller:'CtrlPassword'
+			templateUrl: 'LavaLogin/login/userDetails',
+			controller:'CtrlUserDetails'
 		})
 
 		.state('choosePasswordIntro', {
 			url: '/password/intro',
 			templateUrl: 'LavaLogin/login/choosePasswordIntro',
-			controller:'CtrlPassword'
+			controller:'CtrlChoosePassword'
+		})
+
+		.state('choosePassword', {
+			url: '/password',
+			templateUrl: 'LavaLogin/login/choosePassword',
+			controller:'CtrlChoosePassword'
 		})
 
 		.state('generateKeys', {
@@ -94,12 +72,7 @@ module.exports = ($stateProvider, $urlRouterProvider, $locationProvider) => {
 		.state('backupKeys', {
 			url: '/keys/backup',
 			templateUrl: 'LavaLogin/login/backupKey',
-			controller: 'CtrlBackup'
-		})
-
-		.state('importKeys', {
-			url: '/keys/import',
-			templateUrl: 'LavaLogin/login/importKey'
+			controller: 'CtrlBackupKey'
 		})
 
 		.state('closedAccountFeedback', {

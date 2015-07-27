@@ -6,6 +6,7 @@ This project adheres to [Semantic Versioning](http://semver.org/).
 ### Added
 - Spanish (provided by mortaldamm)
 - Polish (provided by dkol)
+- Portuguese (Brazil) (provided by Valber)
 - settings/security password change error validation  
 - styling settings to signature editor
 - auto-exit from account when user is idle longer than N
