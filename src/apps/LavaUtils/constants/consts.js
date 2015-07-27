@@ -47,7 +47,7 @@ module.exports = {
 	COMPOSE_AUTO_SAVE_INTERVAL: 15000,
 
 	LOGOUT_PRIVATE_PC_TIMEOUT: 30 * 60 * 1000,
-	LOGOUT_PUBLIC_PC_TIMEOUT: 3 * 60 * 1000,
+	LOGOUT_PUBLIC_PC_TIMEOUT: 30 * 60 * 1000,
 
 	// what, why? because reasons ^^
 	stripBOM: (str) => str.replace(/^\ufeff/g, '')
