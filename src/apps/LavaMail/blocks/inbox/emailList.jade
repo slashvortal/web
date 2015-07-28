@@ -5,10 +5,10 @@ div.pane-status(ng-if="selectedTid === null")
 	nav.navbar.navbar-inverse(role="navigation")
 		div
 			ul.nav.navbar-nav
-				li(ng-show="selectedTid && labelName != 'Spam' && labelName != 'Trash' && labelName != 'Drafts'")
+				li(ng-show="selectedTid && labelName != 'Trash' && labelName != 'Drafts'")
 					button.btn.btn-default(ng-click="deleteThread(selectedTid)", tooltip="{{'LAVAMAIL.INBOX.MOVE_TO_TRASH' | translate}}", tooltip-placement="bottom", tooltip-append-to-body="true")
 						span.icon-trash
-				li(ng-show="selectedTid && (labelName == 'Trash' || labelName == 'Drafts' || labelName == 'Spam')")
+				li(ng-show="selectedTid && (labelName == 'Trash' || labelName == 'Drafts')")
 					button.btn.btn-default(ng-click="deleteThread(selectedTid)", tooltip="{{'LAVAMAIL.INBOX.BTN_DELETE_PERMANENTLY' | translate}}", tooltip-placement="bottom", tooltip-append-to-body="true")
 						span.icon-empty-trash
 				li(ng-show="selectedTid && labelName != 'Spam' && labelName != 'Sent' && labelName != 'Drafts'")
